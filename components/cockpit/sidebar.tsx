@@ -14,35 +14,37 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const sections = [
-  {
-    label: "Overview",
-    items: [
-      { label: "Industry Pulse", icon: Home, href: "/" },
-      { label: "Ask AI", icon: Sparkles, href: "/ask", shortcut: "⌘K" },
-      { label: "Query History", icon: Clock, href: "/history" },
-    ],
-  },
-  {
-    label: "Knowledge",
-    items: [
-      { label: "KPI Glossary", icon: BookOpen, href: "/glossary" },
-      { label: "Data Schema", icon: Database, href: "/schema" },
-    ],
-  },
-  {
-    label: "Sources",
-    items: [
-      { label: "OJK Statistics", icon: FileText, href: "/sources/ojk", badge: "60" },
-      { label: "AAJI Press", icon: FileText, href: "/sources/aaji", badge: "12" },
-      { label: "BRI Life Reports", icon: FileText, href: "/sources/brilife", badge: "8" },
-    ],
-  },
-];
+import { useI18n } from "@/lib/i18n/context";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { t } = useI18n();
+
+  const sections = [
+    {
+      label: t("sectionOverview"),
+      items: [
+        { label: t("navIndustryPulse"), icon: Home, href: "/" },
+        { label: t("navAskAI"), icon: Sparkles, href: "/ask", shortcut: "⌘K" },
+        { label: t("navQueryHistory"), icon: Clock, href: "/history" },
+      ],
+    },
+    {
+      label: t("sectionKnowledge"),
+      items: [
+        { label: t("navKpiGlossary"), icon: BookOpen, href: "/glossary" },
+        { label: t("navDataSchema"), icon: Database, href: "/schema" },
+      ],
+    },
+    {
+      label: t("sectionSources"),
+      items: [
+        { label: t("navOjkStatistics"), icon: FileText, href: "/sources/ojk", badge: "60" },
+        { label: t("navAajiPress"), icon: FileText, href: "/sources/aaji", badge: "12" },
+        { label: t("navBriLifeReports"), icon: FileText, href: "/sources/brilife", badge: "8" },
+      ],
+    },
+  ];
 
   return (
     <aside className="w-[240px] border-r border-border bg-sidebar flex flex-col h-screen shrink-0">
@@ -55,14 +57,14 @@ export function Sidebar() {
           )}
         >
           <div className="h-7 w-7 rounded-md bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center shrink-0">
-            <TrendingUp className="h-3.5 w-3.5 text-white" />
+            <TrendingUp className="h-3.5 w-3.5 text-[#0a0a0c]" />
           </div>
           <div className="flex-1 text-left min-w-0">
             <div className="text-[13px] font-semibold text-foreground truncate">
-              PolarisBI
+              {t("workspaceName")}
             </div>
             <div className="text-[10px] text-muted-foreground truncate">
-              Insurance Analytics
+              {t("workspaceTagline")}
             </div>
           </div>
           <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-muted-foreground shrink-0" />
@@ -91,10 +93,7 @@ export function Sidebar() {
                         : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
                     )}
                   >
-                    <Icon className={cn(
-                      "h-3.5 w-3.5 shrink-0",
-                      isActive && "text-primary"
-                    )} />
+                    <Icon className={cn("h-3.5 w-3.5 shrink-0", isActive && "text-primary")} />
                     <span className="flex-1 truncate">{item.label}</span>
                     {"shortcut" in item && item.shortcut && (
                       <kbd className="hidden group-hover:inline-flex px-1.5 py-0.5 text-[9px] font-mono bg-muted/60 border border-border/60 rounded text-muted-foreground">
@@ -124,7 +123,7 @@ export function Sidebar() {
           )}
         >
           <Settings className="h-3.5 w-3.5" />
-          <span>Settings</span>
+          <span>{t("navSettings")}</span>
         </Link>
         <div className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-sidebar-accent/60 cursor-pointer transition-colors">
           <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center text-[10px] font-semibold text-[#0a0a0c] shrink-0">
@@ -132,7 +131,7 @@ export function Sidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[12px] font-medium text-foreground truncate">Darmawan</div>
-            <div className="text-[10px] text-muted-foreground truncate">Analyst</div>
+            <div className="text-[10px] text-muted-foreground truncate">{t("navAnalystRole")}</div>
           </div>
         </div>
       </div>

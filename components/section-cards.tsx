@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -16,69 +17,6 @@ interface KPIDefinition {
   unit: string;
   context: string;
 }
-
-const kpis: KPIDefinition[] = [
-  {
-    id: "premi_industri",
-    title: "Premi Bruto Industri",
-    sparklineKey: "premi_industri",
-    value: "Rp 109,00 T",
-    delta: "+3,6%",
-    deltaType: "positive",
-    unit: "FY 2024 · AAJI",
-    context: "Pertumbuhan industri nasional",
-  },
-  {
-    id: "ape_brilife",
-    title: "APE BRI Life",
-    sparklineKey: "ape_brilife",
-    value: "Rp 3,42 T",
-    delta: "+11,0%",
-    deltaType: "positive",
-    unit: "FY 2024 · BRI Life",
-    context: "Bancassurance dominan",
-  },
-  {
-    id: "rbc_brilife",
-    title: "RBC BRI Life",
-    sparklineKey: "rbc_brilife",
-    value: "434,6%",
-    delta: "vs 120% min",
-    deltaType: "neutral",
-    unit: "Q4 2024 · OJK",
-    context: "3.6× di atas regulator",
-  },
-  {
-    id: "laba_brilife",
-    title: "Laba Bersih",
-    sparklineKey: "laba_brilife",
-    value: "Rp 760,4 M",
-    delta: "+42,1%",
-    deltaType: "positive",
-    unit: "FY 2024 · BRI Life",
-    context: "Pertumbuhan signifikan YoY",
-  },
-  {
-    id: "klaim_ratio",
-    title: "Rasio Klaim",
-    sparklineKey: "klaim_ratio",
-    value: "62,3%",
-    delta: "+2,1pp",
-    deltaType: "negative",
-    unit: "FY 2024 · Industri",
-    context: "Tekanan pricing kesehatan",
-  },
-  {
-    id: "market_share",
-    title: "Market Share BRI Life",
-    sparklineKey: "market_share_brilife",
-    value: "3,14%",
-    delta: "+0,4pp",
-    deltaType: "positive",
-    unit: "FY 2024 · vs industri",
-    context: "Naik 4 peringkat",
-  },
-];
 
 function Sparkline({
   points,
@@ -130,7 +68,15 @@ function Sparkline({
       <path d={linePath} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       {pathPoints.map((p, i) => {
         const [x, y] = p.split(",");
-        return <circle key={i} cx={x} cy={y} r={i === pathPoints.length - 1 ? "2.5" : "0"} fill={color} />;
+        return (
+          <circle
+            key={i}
+            cx={x}
+            cy={y}
+            r={i === pathPoints.length - 1 ? "2.5" : "0"}
+            fill={color}
+          />
+        );
       })}
     </svg>
   );
@@ -152,7 +98,71 @@ function DeltaBadge({ delta, type }: { delta: string; type: "positive" | "negati
 }
 
 export function SectionCards() {
+  const { t } = useI18n();
   const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
+
+  const kpis: KPIDefinition[] = [
+    {
+      id: "premi_industri",
+      title: t("kpiPremiumIndustri"),
+      sparklineKey: "premi_industri",
+      value: "Rp 109,00 T",
+      delta: "+3,6%",
+      deltaType: "positive",
+      unit: t("headerYear") + " · AAJI",
+      context: t("kpiContextNational"),
+    },
+    {
+      id: "ape_brilife",
+      title: t("kpiApeBrilife"),
+      sparklineKey: "ape_brilife",
+      value: "Rp 3,42 T",
+      delta: "+11,0%",
+      deltaType: "positive",
+      unit: t("headerYear") + " · BRI Life",
+      context: t("kpiContextBancass"),
+    },
+    {
+      id: "rbc_brilife",
+      title: t("kpiRbcBrilife"),
+      sparklineKey: "rbc_brilife",
+      value: "434,6%",
+      delta: t("heroVsMinOJK"),
+      deltaType: "neutral",
+      unit: "Q4 2024 · OJK",
+      context: t("kpiContextRegulator"),
+    },
+    {
+      id: "laba_brilife",
+      title: t("kpiLabaBrilife"),
+      sparklineKey: "laba_brilife",
+      value: "Rp 760,4 M",
+      delta: "+42,1%",
+      deltaType: "positive",
+      unit: t("headerYear") + " · BRI Life",
+      context: t("kpiContextYoY"),
+    },
+    {
+      id: "klaim_ratio",
+      title: t("kpiRasioKlaim"),
+      sparklineKey: "klaim_ratio",
+      value: "62,3%",
+      delta: "+2,1pp",
+      deltaType: "negative",
+      unit: t("headerYear") + " · Industri",
+      context: t("kpiContextPricing"),
+    },
+    {
+      id: "market_share",
+      title: t("kpiMarketShare"),
+      sparklineKey: "market_share_brilife",
+      value: "3,14%",
+      delta: "+0,4pp",
+      deltaType: "positive",
+      unit: t("headerYear") + " · vs industri",
+      context: t("kpiContextRanking"),
+    },
+  ];
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -173,6 +183,7 @@ export function SectionCards() {
       setSparklines(results);
     };
     fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

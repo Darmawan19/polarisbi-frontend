@@ -12,12 +12,20 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { useI18n } from "@/lib/i18n/context";
 
-const SUGGESTED_QUESTIONS = [
+const SUGGESTED_QUESTIONS_ID = [
   "Tunjukkan tren premi BRI Life per kuartal 2024",
   "Bandingkan APE BRI Life vs Allianz per kanal distribusi",
   "Top 5 perusahaan dengan RBC tertinggi 2024Q4",
   "Rasio klaim kesehatan per perusahaan 2024",
+];
+
+const SUGGESTED_QUESTIONS_EN = [
+  "Show BRI Life premium trend per quarter 2024",
+  "Compare BRI Life APE vs Allianz by distribution channel",
+  "Top 5 companies with highest RBC in 2024Q4",
+  "Health claims ratio per company 2024",
 ];
 
 interface CommandPaletteProps {
@@ -25,6 +33,7 @@ interface CommandPaletteProps {
 }
 
 export function CommandPalette({ onAsk }: CommandPaletteProps) {
+  const { lang, t } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -40,16 +49,18 @@ export function CommandPalette({ onAsk }: CommandPaletteProps) {
   }, []);
 
   const handleSubmit = (question: string) => {
-    onAsk?.(question);
+    onAsk?.(question, lang);
     setOpen(false);
     setQuery("");
   };
+
+  const suggestedQuestions = lang === "id" ? SUGGESTED_QUESTIONS_ID : SUGGESTED_QUESTIONS_EN;
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <Command>
         <CommandInput
-          placeholder="Ask anything about insurance data..."
+          placeholder={t("cmdPlaceholder")}
           value={query}
           onValueChange={setQuery}
           onKeyDown={(e) => {
@@ -61,14 +72,14 @@ export function CommandPalette({ onAsk }: CommandPaletteProps) {
         <CommandList>
           <CommandEmpty>
             <div className="py-6 text-center text-[13px] text-muted-foreground">
-              Press Enter to ask:{" "}
+              {t("cmdPressEnter")}:{" "}
               <span className="text-foreground">&ldquo;{query}&rdquo;</span>
             </div>
           </CommandEmpty>
           {query.length === 0 && (
             <>
-              <CommandGroup heading="Suggested Questions">
-                {SUGGESTED_QUESTIONS.map((q) => (
+              <CommandGroup heading={t("cmdSuggestedHeading")}>
+                {suggestedQuestions.map((q) => (
                   <CommandItem
                     key={q}
                     onSelect={() => handleSubmit(q)}
@@ -80,12 +91,12 @@ export function CommandPalette({ onAsk }: CommandPaletteProps) {
                 ))}
               </CommandGroup>
               <CommandSeparator />
-              <CommandGroup heading="Actions">
+              <CommandGroup heading={t("cmdActionsHeading")}>
                 <CommandItem disabled className="text-[13px]">
                   <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
-                  Open chat conversation
+                  {t("cmdOpenChat")}
                   <span className="ml-auto text-[10px] text-muted-foreground">
-                    Soon
+                    {t("cmdSoon")}
                   </span>
                 </CommandItem>
               </CommandGroup>
@@ -98,7 +109,7 @@ export function CommandPalette({ onAsk }: CommandPaletteProps) {
                 className="text-[13px] cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
-                Ask:{" "}
+                {t("cmdAsk")}:{" "}
                 <span className="ml-1 text-foreground">{query}</span>
               </CommandItem>
             </CommandGroup>

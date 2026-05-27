@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 
 const data = [
   { quarter: "Q1 2024", "BRI Life": 0.83, Prudential: 5.42, Allianz: 4.12, Manulife: 3.78, AIA: 3.45 },
@@ -57,16 +58,17 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 
 export function ChartAreaInteractive() {
   const [activeCompany, setActiveCompany] = useState<string | null>(null);
+  const { t } = useI18n();
 
   return (
     <div className="p-6">
       <div className="flex items-start justify-between mb-6">
         <div>
           <h3 className="text-[14px] font-semibold text-foreground tracking-tight">
-            Tren Premi Bruto · 5 Perusahaan Terbesar
+            {t("chartTitle")}
           </h3>
           <p className="text-[12px] text-muted-foreground mt-1">
-            Per kuartal 2024 · dalam triliun Rupiah · sumber AAJI
+            {t("chartSubtitle")}
           </p>
         </div>
         <div className="flex items-center gap-1">

@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { Sparkles, Calendar } from "lucide-react";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
+import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const [isMac, setIsMac] = useState(false);
   const [time, setTime] = useState("");
+  const { t } = useI18n();
 
   useEffect(() => {
     setIsMac(navigator.platform.toLowerCase().includes("mac"));
@@ -46,11 +48,11 @@ export function Header() {
         <div className="flex items-center gap-2">
           <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-[13px] font-semibold text-foreground">
-            Industry Pulse
+            {t("headerSectionLabel")}
           </span>
           <span className="text-[12px] text-muted-foreground">·</span>
           <span className="text-[12px] text-muted-foreground tabular-nums">
-            FY 2024
+            {t("headerYear")}
           </span>
         </div>
 
@@ -60,7 +62,7 @@ export function Header() {
         <button className="flex items-center gap-2 h-7 px-2.5 rounded-md hover:bg-muted/40 transition-colors">
           <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-[12px] text-foreground tabular-nums">
-            Jan 1 — Dec 31, 2024
+            {t("headerDateRange")}
           </span>
         </button>
       </div>
@@ -76,7 +78,7 @@ export function Header() {
           )}
         >
           <Sparkles className="h-3 w-3" />
-          <span>Ask anything...</span>
+          <span>{t("headerAskPlaceholder")}</span>
           <kbd className="ml-6 px-1.5 py-0.5 rounded text-[10px] bg-muted/60 border border-border font-mono">
             {isMac ? "⌘K" : "Ctrl+K"}
           </kbd>

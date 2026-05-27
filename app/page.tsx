@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useI18n } from "@/lib/i18n/context";
 import { Sidebar } from "@/components/cockpit/sidebar";
 import { Header } from "@/components/cockpit/header";
 import { HeroCards } from "@/components/cockpit/hero-cards";
@@ -13,6 +14,7 @@ import { useAskStream } from "@/hooks/use-ask-stream";
 
 export default function Home() {
   const { state, ask, reset } = useAskStream();
+  const { t } = useI18n();
 
   const handleAsk = useCallback(
     (question: string, language?: string) => {
@@ -37,10 +39,10 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-[20px] font-semibold tracking-tight text-foreground">
-                    Current performance
+                    {t("sectionCurrentPerformance")}
                   </h2>
                   <p className="text-[13px] text-muted-foreground mt-0.5">
-                    FY 2024 snapshot · Industry premium, BRI Life capital, net profit
+                    {t("sectionCurrentPerformanceSubtitle")}
                   </p>
                 </div>
               </div>
@@ -52,10 +54,10 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-[20px] font-semibold tracking-tight text-foreground">
-                    Overview
+                    {t("sectionOverviewTitle")}
                   </h2>
                   <p className="text-[13px] text-muted-foreground mt-0.5">
-                    Key insurance metrics with quarterly trends
+                    {t("sectionOverviewSubtitle")}
                   </p>
                 </div>
               </div>

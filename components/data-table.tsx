@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 
 interface CompanyRow {
   rank: number;
@@ -60,6 +62,7 @@ function SortHeader({
   dir,
   onSort,
   align = "right",
+  tooltipText,
 }: {
   label: string;
   sortKey: SortKey;
@@ -67,27 +70,46 @@ function SortHeader({
   dir: "asc" | "desc";
   onSort: (key: SortKey) => void;
   align?: "left" | "right";
+  tooltipText?: string;
 }) {
-  return (
+  const isActive = current === sortKey;
+
+  const headerButton = (
     <button
       onClick={() => onSort(sortKey)}
       className={cn(
-        "flex items-center gap-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors",
-        align === "right" && "ml-auto"
+        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider transition-colors group",
+        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+        align === "left" ? "justify-start" : "justify-end ml-auto"
       )}
     >
-      {label}
-      <ArrowUpDown
-        className={cn(
-          "h-3 w-3",
-          current === sortKey ? "text-primary" : "text-muted-foreground/40"
-        )}
-      />
+      {tooltipText && (
+        <Info className="h-2.5 w-2.5 text-muted-foreground/40 group-hover:text-muted-foreground/80 transition-colors" />
+      )}
+      <span>{label}</span>
+      {isActive && (
+        <span className="font-numeric text-[10px]">{dir === "asc" ? "↑" : "↓"}</span>
+      )}
     </button>
+  );
+
+  if (!tooltipText) return headerButton;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger>{headerButton}</TooltipTrigger>
+      <TooltipContent
+        side="top"
+        className="max-w-[280px] text-[11px] leading-relaxed bg-popover border border-border text-foreground p-3"
+      >
+        {tooltipText}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
 export function DataTable() {
+  const { t } = useI18n();
   const [filter, setFilter] = useState("");
   const [sortKey, setSortKey] = useState<SortKey | null>("rank");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
@@ -111,7 +133,10 @@ export function DataTable() {
       result = [...result].sort((a, b) => {
         const av = a[sortKey];
         const bv = b[sortKey];
-        const cmp = typeof av === "number" && typeof bv === "number" ? av - bv : String(av).localeCompare(String(bv));
+        const cmp =
+          typeof av === "number" && typeof bv === "number"
+            ? av - bv
+            : String(av).localeCompare(String(bv));
         return sortDir === "asc" ? cmp : -cmp;
       });
     }
@@ -123,15 +148,15 @@ export function DataTable() {
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/60">
         <div>
           <span className="text-[13px] font-semibold text-foreground tracking-tight">
-            Top 10 Perusahaan Asuransi Jiwa
+            {t("tableTitle")}
           </span>
-          <span className="ml-2 text-[11px] text-muted-foreground">Q4 2024 · OJK</span>
+          <span className="ml-2 text-[11px] text-muted-foreground">{t("tableSubtitle")}</span>
         </div>
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
           <input
             type="text"
-            placeholder="Filter..."
+            placeholder={t("tableFilterPlaceholder")}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="h-7 w-36 pl-8 pr-3 rounded-md bg-card border border-border/60 text-[12px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/60 transition-colors"
@@ -144,25 +169,76 @@ export function DataTable() {
           <thead>
             <tr className="border-b border-border/60">
               <th className="px-4 py-2.5 text-left w-8">
-                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">#</span>
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  #
+                </span>
               </th>
               <th className="px-4 py-2.5 text-left">
-                <SortHeader label="Company" sortKey="company" current={sortKey} dir={sortDir} onSort={handleSort} align="left" />
+                <SortHeader
+                  label={t("tableColCompany")}
+                  sortKey="company"
+                  current={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  align="left"
+                  tooltipText={t("tooltipCompany")}
+                />
               </th>
               <th className="px-4 py-2.5 text-right">
-                <SortHeader label="Premium (Rp T)" sortKey="premium" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortHeader
+                  label={t("tableColPremium")}
+                  sortKey="premium"
+                  current={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  tooltipText={t("tooltipPremium")}
+                />
               </th>
               <th className="px-4 py-2.5 text-right">
-                <SortHeader label="Mkt Share" sortKey="marketShare" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortHeader
+                  label={t("tableColMarketShare")}
+                  sortKey="marketShare"
+                  current={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  tooltipText={t("tooltipMarketShare")}
+                />
               </th>
               <th className="px-4 py-2.5 text-right">
-                <SortHeader label="RBC" sortKey="rbc" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortHeader
+                  label={t("tableColRBC")}
+                  sortKey="rbc"
+                  current={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  tooltipText={t("tooltipRBC")}
+                />
               </th>
               <th className="px-4 py-2.5 text-right">
-                <SortHeader label="Growth YoY" sortKey="growth" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortHeader
+                  label={t("tableColGrowth")}
+                  sortKey="growth"
+                  current={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  tooltipText={t("tooltipGrowth")}
+                />
               </th>
               <th className="px-4 py-2.5 text-left">
-                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Channel</span>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wider cursor-help">
+                      <Info className="h-2.5 w-2.5 text-muted-foreground/40" />
+                      {t("tableColChannel")}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="max-w-[280px] text-[11px] leading-relaxed bg-popover border border-border text-foreground p-3"
+                  >
+                    {t("tooltipChannel")}
+                  </TooltipContent>
+                </Tooltip>
               </th>
             </tr>
           </thead>
@@ -226,7 +302,7 @@ export function DataTable() {
 
       <div className="px-4 py-2.5 border-t border-border/60">
         <span className="text-[11px] text-muted-foreground/60">
-          {filtered.length} of {rows.length} companies
+          {t("tableShowingOf", { n: filtered.length, total: rows.length })}
         </span>
       </div>
     </div>

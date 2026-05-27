@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Sparkles, Loader2, AlertCircle, Copy, Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 import type { AskState } from "@/hooks/use-ask-stream";
 
 interface AskResultProps {
@@ -12,22 +13,11 @@ interface AskResultProps {
 
 type Tab = "insight" | "results" | "sql";
 
-const stageLabel: Record<AskState["stage"], string> = {
-  idle: "Idle",
-  generating_sql: "Translating…",
-  executing_sql: "Running query…",
-  generating_insight: "Generating insight…",
-  done: "Complete",
-  error: "Error",
-};
-
 function TabButton({
-  id,
   active,
   children,
   onClick,
 }: {
-  id: Tab;
   active: boolean;
   children: React.ReactNode;
   onClick: () => void;
@@ -41,14 +31,12 @@ function TabButton({
       )}
     >
       {children}
-      {active && (
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-primary" />
-      )}
+      {active && <div className="absolute bottom-0 left-0 right-0 h-px bg-primary" />}
     </button>
   );
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, labelCopy, labelCopied }: { text: string; labelCopy: string; labelCopied: string }) {
   const [copied, setCopied] = useState(false);
   function handleCopy() {
     navigator.clipboard.writeText(text).then(() => {
@@ -62,16 +50,26 @@ function CopyButton({ text }: { text: string }) {
       className="flex items-center gap-1.5 px-2 py-1 rounded text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
     >
       {copied ? <Check className="h-3 w-3 text-[#10b981]" /> : <Copy className="h-3 w-3" />}
-      {copied ? "Copied" : "Copy"}
+      {copied ? labelCopied : labelCopy}
     </button>
   );
 }
 
 export function AskResult({ state, onClose }: AskResultProps) {
+  const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("insight");
   const isStreaming = state.stage === "generating_insight";
   const isLoading = state.stage === "generating_sql" || state.stage === "executing_sql";
   const isError = state.stage === "error";
+
+  const stageLabelMap: Record<AskState["stage"], string> = {
+    idle: t("askResultStatusIdle"),
+    generating_sql: t("askResultStatusGeneratingSql"),
+    executing_sql: t("askResultStatusExecutingSql"),
+    generating_insight: t("askResultStatusGeneratingInsight"),
+    done: t("askResultStatusDone"),
+    error: t("askResultStatusError"),
+  };
 
   const statusDotColor =
     isError
@@ -98,10 +96,10 @@ export function AskResult({ state, onClose }: AskResultProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[11px] font-numeric text-muted-foreground/60 uppercase tracking-wider">
-                Query #001
+                {t("askResultQueryLabel")} #001
               </span>
               <div className={cn("h-1.5 w-1.5 rounded-full", statusDotColor)} />
-              <span className="text-[11px] text-muted-foreground/80">{stageLabel[state.stage]}</span>
+              <span className="text-[11px] text-muted-foreground/80">{stageLabelMap[state.stage]}</span>
             </div>
             <p className="text-[13px] text-foreground leading-snug line-clamp-2">{state.question}</p>
           </div>
@@ -116,19 +114,19 @@ export function AskResult({ state, onClose }: AskResultProps) {
 
         {/* Tabs */}
         <div className="flex items-center border-b border-border px-2 shrink-0">
-          <TabButton id="insight" active={tab === "insight"} onClick={() => setTab("insight")}>
-            Insight
+          <TabButton active={tab === "insight"} onClick={() => setTab("insight")}>
+            {t("askResultTabInsight")}
           </TabButton>
-          <TabButton id="results" active={tab === "results"} onClick={() => setTab("results")}>
-            Results
+          <TabButton active={tab === "results"} onClick={() => setTab("results")}>
+            {t("askResultTabResults")}
             {state.rows.length > 0 && (
               <span className="ml-1.5 text-[10px] font-numeric text-muted-foreground/60">
                 {state.rows.length}
               </span>
             )}
           </TabButton>
-          <TabButton id="sql" active={tab === "sql"} onClick={() => setTab("sql")}>
-            SQL
+          <TabButton active={tab === "sql"} onClick={() => setTab("sql")}>
+            {t("askResultTabSQL")}
           </TabButton>
         </div>
 
@@ -157,7 +155,7 @@ export function AskResult({ state, onClose }: AskResultProps) {
               )}
 
               {!isLoading && !state.insight && !isError && (
-                <p className="text-[13px] text-muted-foreground italic">Waiting for insight…</p>
+                <p className="text-[13px] text-muted-foreground italic">{t("askResultWaitingInsight")}</p>
               )}
 
               {state.insight && (
@@ -179,10 +177,10 @@ export function AskResult({ state, onClose }: AskResultProps) {
                   {isLoading ? (
                     <div className="flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Running query…
+                      {t("askResultRunningQuery")}
                     </div>
                   ) : (
-                    "No results yet."
+                    t("askResultNoResults")
                   )}
                 </div>
               ) : (
@@ -191,7 +189,10 @@ export function AskResult({ state, onClose }: AskResultProps) {
                     <thead>
                       <tr className="border-b border-border/60 bg-muted/20">
                         {state.columns.map((col) => (
-                          <th key={col} className="px-4 py-2.5 text-left font-medium text-muted-foreground text-[11px] uppercase tracking-wider whitespace-nowrap">
+                          <th
+                            key={col}
+                            className="px-4 py-2.5 text-left font-medium text-muted-foreground text-[11px] uppercase tracking-wider whitespace-nowrap"
+                          >
                             {col}
                           </th>
                         ))}
@@ -236,15 +237,19 @@ export function AskResult({ state, onClose }: AskResultProps) {
               {!state.sql ? (
                 <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
                   {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {isLoading ? "Generating SQL…" : "No SQL generated yet."}
+                  {isLoading ? t("askResultGeneratingSql") : t("askResultNoSql")}
                 </div>
               ) : (
                 <div className="rounded-lg border border-border/60 overflow-hidden">
                   <div className="flex items-center justify-between px-3 py-2 bg-muted/20 border-b border-border/40">
                     <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                      Generated SQL
+                      {t("askResultGeneratedSql")}
                     </span>
-                    <CopyButton text={state.sql} />
+                    <CopyButton
+                      text={state.sql}
+                      labelCopy={t("askResultCopy")}
+                      labelCopied={t("askResultCopied")}
+                    />
                   </div>
                   <pre className="p-4 text-[12px] font-mono text-foreground/80 overflow-x-auto leading-relaxed">
                     {state.sql}
@@ -261,14 +266,16 @@ export function AskResult({ state, onClose }: AskResultProps) {
         {/* Footer */}
         <div className="flex items-center justify-between px-5 py-3 border-t border-border shrink-0">
           <span className="text-[11px] font-numeric text-muted-foreground/60">
-            {state.rows.length > 0 ? `${state.rows.length} rows returned` : "No data yet"}
+            {state.rows.length > 0
+              ? t("askResultRowsReturned", { n: state.rows.length })
+              : t("askResultNoDataYet")}
           </span>
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
           >
             <RotateCcw className="h-3 w-3" />
-            New query
+            {t("askResultNewQuery")}
           </button>
         </div>
       </div>
