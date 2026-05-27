@@ -1,17 +1,24 @@
+"use client";
+
+import { Sidebar } from "@/components/cockpit/sidebar";
+import { Header } from "@/components/cockpit/header";
+import { EmptyState } from "@/components/cockpit/empty-state";
+
 export default function Home() {
+  const handleSubmit = (value: string) => {
+    // TODO Chunk 4B-2: wire to FastAPI backend
+    console.log("Submit:", value);
+  };
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-4">
-        <h1 className="text-6xl font-bold tracking-tight text-foreground">
-          🧭 PolarisBI
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          Analitik Asuransi yang Berpikir
-        </p>
-        <p className="text-sm text-accent">
-          Day 2 — Setup Complete ✓
-        </p>
+    <div className="flex h-screen bg-background">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <EmptyState onSubmit={handleSubmit} />
+        </main>
       </div>
-    </main>
+    </div>
   );
 }

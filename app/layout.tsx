@@ -14,21 +14,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PolarisBI — Analitik Asuransi yang Berpikir",
-  description: "Insurance analytics platform powered by AI",
+  title: "PolarisBI — Insurance Analytics that Thinks",
+  description: "AI-augmented data analyst cockpit for Indonesian insurance industry",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full">
         <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
