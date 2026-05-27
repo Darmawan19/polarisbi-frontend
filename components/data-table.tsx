@@ -74,11 +74,23 @@ function SortHeader({
 }) {
   const isActive = current === sortKey;
 
-  const headerButton = (
-    <button
-      onClick={() => onSort(sortKey)}
+  const handleClick = () => onSort(sortKey);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSort(sortKey);
+    }
+  };
+
+  const headerEl = (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
       className={cn(
-        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider transition-colors group",
+        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider transition-colors group cursor-pointer select-none",
+        "focus:outline-none focus:text-foreground",
         isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
         align === "left" ? "justify-start" : "justify-end ml-auto"
       )}
@@ -90,14 +102,14 @@ function SortHeader({
       {isActive && (
         <span className="font-numeric text-[10px]">{dir === "asc" ? "↑" : "↓"}</span>
       )}
-    </button>
+    </div>
   );
 
-  if (!tooltipText) return headerButton;
+  if (!tooltipText) return headerEl;
 
   return (
     <Tooltip>
-      <TooltipTrigger>{headerButton}</TooltipTrigger>
+      <TooltipTrigger>{headerEl}</TooltipTrigger>
       <TooltipContent
         side="top"
         className="max-w-[280px] text-[11px] leading-relaxed bg-popover border border-border text-foreground p-3"
@@ -227,10 +239,10 @@ export function DataTable() {
               <th className="px-4 py-2.5 text-left">
                 <Tooltip>
                   <TooltipTrigger>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wider cursor-help">
+                    <div className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wider cursor-help">
                       <Info className="h-2.5 w-2.5 text-muted-foreground/40" />
                       {t("tableColChannel")}
-                    </span>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent
                     side="top"
