@@ -25,26 +25,34 @@ export function Sidebar() {
       label: t("sectionOverview"),
       items: [
         { label: t("navIndustryPulse"), icon: Home, href: "/" },
-        { label: t("navAskAI"), icon: Sparkles, href: "/ask", shortcut: "⌘K" },
-        { label: t("navQueryHistory"), icon: Clock, href: "/history" },
+        { label: t("navAskAI"), icon: Sparkles, href: "/ask-ai", shortcut: "⌘K" },
+        { label: t("navQueryHistory"), icon: Clock, href: "/query-history" },
       ],
     },
     {
       label: t("sectionKnowledge"),
       items: [
-        { label: t("navKpiGlossary"), icon: BookOpen, href: "/glossary" },
-        { label: t("navDataSchema"), icon: Database, href: "/schema" },
+        { label: t("navKpiGlossary"), icon: BookOpen, href: "/kpi-glossary" },
+        { label: t("navDataSchema"), icon: Database, href: "/data-schema" },
       ],
     },
     {
       label: t("sectionSources"),
       items: [
-        { label: t("navOjkStatistics"), icon: FileText, href: "/sources/ojk", badge: "60" },
-        { label: t("navAajiPress"), icon: FileText, href: "/sources/aaji", badge: "12" },
-        { label: t("navBriLifeReports"), icon: FileText, href: "/sources/brilife", badge: "8" },
+        { label: t("navOjkStatistics"), icon: FileText, href: "/sources/ojk-statistics", badge: "60" },
+        { label: t("navAajiPress"), icon: FileText, href: "/sources/aaji-press", badge: "12" },
+        { label: t("navBriLifeReports"), icon: FileText, href: "/sources/bri-life-reports", badge: "8" },
       ],
     },
   ];
+
+  function isActive(href: string) {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  }
+
+  const settingsActive = pathname === "/settings";
+  const profileActive = pathname === "/profile";
 
   return (
     <aside className="w-[240px] border-r border-border bg-sidebar flex flex-col h-screen shrink-0">
@@ -87,7 +95,7 @@ export function Sidebar() {
             </div>
             <div className="space-y-0.5">
               {section.items.map((item) => {
-                const isActive = pathname === item.href;
+                const active = isActive(item.href);
                 const Icon = item.icon;
                 return (
                   <Link
@@ -95,12 +103,12 @@ export function Sidebar() {
                     href={item.href}
                     className={cn(
                       "flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] transition-colors group",
-                      isActive
+                      active
                         ? "bg-sidebar-accent text-foreground"
                         : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
                     )}
                   >
-                    <Icon className={cn("h-3.5 w-3.5 shrink-0", isActive && "text-primary")} />
+                    <Icon className={cn("h-3.5 w-3.5 shrink-0", active && "text-primary")} />
                     <span className="flex-1 truncate">{item.label}</span>
                     {"shortcut" in item && item.shortcut && (
                       <kbd className="hidden group-hover:inline-flex px-1.5 py-0.5 text-[9px] font-mono bg-muted/60 border border-border/60 rounded text-muted-foreground">
@@ -126,13 +134,23 @@ export function Sidebar() {
           href="/settings"
           className={cn(
             "flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] transition-colors",
-            "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
+            settingsActive
+              ? "bg-sidebar-accent text-foreground"
+              : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
           )}
         >
-          <Settings className="h-3.5 w-3.5" />
+          <Settings className={cn("h-3.5 w-3.5", settingsActive && "text-primary")} />
           <span>{t("navSettings")}</span>
         </Link>
-        <div className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-sidebar-accent/60 cursor-pointer transition-colors">
+        <Link
+          href="/profile"
+          className={cn(
+            "flex items-center gap-2 px-2 py-2 rounded-md transition-colors",
+            profileActive
+              ? "bg-sidebar-accent"
+              : "hover:bg-sidebar-accent/60 cursor-pointer"
+          )}
+        >
           <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center text-[10px] font-semibold text-[#0a0a0c] shrink-0">
             D
           </div>
@@ -140,7 +158,7 @@ export function Sidebar() {
             <div className="text-[12px] font-medium text-foreground truncate">Darmawan</div>
             <div className="text-[10px] text-muted-foreground truncate">{t("navAnalystRole")}</div>
           </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );

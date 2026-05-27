@@ -21,6 +21,7 @@ export const dictionary = {
   navBriLifeReports: { id: "Laporan BRI Life", en: "BRI Life Reports" },
   navSettings: { id: "Pengaturan", en: "Settings" },
   navAnalystRole: { id: "Analis", en: "Analyst" },
+  navProfile: { id: "Profil", en: "Profile" },
 
   // Header
   headerSectionLabel: { id: "Denyut Industri", en: "Industry Pulse" },
