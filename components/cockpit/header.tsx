@@ -44,7 +44,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         {/* Section context */}
         <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-[#0070f3] animate-pulse" />
+          <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-[13px] font-semibold text-foreground">
             Industry Pulse
           </span>

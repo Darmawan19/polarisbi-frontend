@@ -10,7 +10,6 @@ import { SectionCards } from "@/components/section-cards";
 import { CommandPalette } from "@/components/cockpit/command-palette";
 import { AskResult } from "@/components/cockpit/ask-result";
 import { useAskStream } from "@/hooks/use-ask-stream";
-import data from "./data.json";
 
 export default function Home() {
   const { state, ask, reset } = useAskStream();
@@ -29,8 +28,10 @@ export default function Home() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Header />
-        <main className="flex-1 overflow-auto">
-          <div className="flex flex-col gap-8 p-8 max-w-[1600px] mx-auto">
+        <main className="flex-1 overflow-auto relative">
+          <div className="absolute inset-0 bg-grid pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-[400px] bg-radial-glow pointer-events-none" />
+          <div className="relative flex flex-col gap-8 p-8 max-w-[1600px] mx-auto">
             {/* Section 1: Hero KPI cards (Supabase-style) */}
             <section>
               <div className="flex items-center justify-between mb-4">
@@ -70,7 +71,7 @@ export default function Home() {
 
             {/* Section 4: Companies table */}
             <section>
-              <DataTable data={data} />
+              <DataTable />
             </section>
           </div>
         </main>

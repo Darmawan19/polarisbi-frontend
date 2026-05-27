@@ -20,7 +20,11 @@ const SUGGESTED_QUESTIONS = [
   "Rasio klaim kesehatan per perusahaan 2024",
 ];
 
-export function CommandPalette() {
+interface CommandPaletteProps {
+  onAsk?: (question: string, language?: string) => void;
+}
+
+export function CommandPalette({ onAsk }: CommandPaletteProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -36,8 +40,7 @@ export function CommandPalette() {
   }, []);
 
   const handleSubmit = (question: string) => {
-    // TODO Chunk 4B-2: wire to FastAPI streaming
-    console.log("Ask:", question);
+    onAsk?.(question);
     setOpen(false);
     setQuery("");
   };

@@ -1,151 +1,143 @@
 "use client";
 
-import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { useState } from "react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { cn } from "@/lib/utils";
 
-const chartData = [
-  { quarter: "Q1", briLife: 2.0, prudential: 5.5, allianz: 4.2, manulife: 3.8, aia: 3.5 },
-  { quarter: "Q2", briLife: 2.2, prudential: 5.8, allianz: 4.4, manulife: 3.9, aia: 3.6 },
-  { quarter: "Q3", briLife: 2.3, prudential: 5.6, allianz: 4.5, manulife: 4.0, aia: 3.7 },
-  { quarter: "Q4", briLife: 2.4, prudential: 6.0, allianz: 4.7, manulife: 4.2, aia: 3.9 },
+const data = [
+  { quarter: "Q1 2024", "BRI Life": 0.83, Prudential: 5.42, Allianz: 4.12, Manulife: 3.78, AIA: 3.45 },
+  { quarter: "Q2 2024", "BRI Life": 0.92, Prudential: 5.68, Allianz: 4.35, Manulife: 3.91, AIA: 3.62 },
+  { quarter: "Q3 2024", "BRI Life": 0.83, Prudential: 5.51, Allianz: 4.48, Manulife: 4.02, AIA: 3.71 },
+  { quarter: "Q4 2024", "BRI Life": 0.84, Prudential: 5.89, Allianz: 4.65, Manulife: 4.21, AIA: 3.85 },
 ];
 
-const series = [
-  { key: "briLife",    label: "BRI Life",   color: "var(--chart-1)" },
-  { key: "prudential", label: "Prudential", color: "var(--chart-2)" },
-  { key: "allianz",    label: "Allianz",    color: "var(--chart-3)" },
-  { key: "manulife",   label: "Manulife",   color: "var(--chart-4)" },
-  { key: "aia",        label: "AIA",        color: "var(--chart-5)" },
+const companies = [
+  { name: "BRI Life", color: "#00d4ff", isHighlight: true },
+  { name: "Prudential", color: "#a855f7", isHighlight: false },
+  { name: "Allianz", color: "#f59e0b", isHighlight: false },
+  { name: "Manulife", color: "#10b981", isHighlight: false },
+  { name: "AIA", color: "#f43f5e", isHighlight: false },
 ];
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: {
+interface CustomTooltipProps {
   active?: boolean;
-  payload?: { name: string; value: number; color: string }[];
+  payload?: Array<{ name: string; value: number; color: string }>;
   label?: string;
-}) => {
-  if (!active || !payload?.length) return null;
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null;
   return (
-    <div className="rounded-lg border border-border bg-popover px-3 py-2 text-[12px] shadow-lg">
-      <div className="font-medium text-foreground mb-1.5">{label} 2024</div>
-      {payload.map((p) => (
-        <div key={p.name} className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5">
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{ background: p.color }}
-            />
-            <span className="text-muted-foreground">{p.name}</span>
+    <div className="rounded-md border border-border bg-popover/95 backdrop-blur-sm p-3 shadow-xl min-w-[180px]">
+      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+        {label}
+      </div>
+      <div className="space-y-1.5">
+        {[...payload].sort((a, b) => b.value - a.value).map((entry) => (
+          <div key={entry.name} className="flex items-center justify-between gap-3 text-[12px]">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="text-foreground">{entry.name}</span>
+            </div>
+            <span className="font-numeric text-foreground">Rp {entry.value.toFixed(2)} T</span>
           </div>
-          <span className="tabular-nums font-medium text-foreground">
-            Rp {p.value.toFixed(1)} T
-          </span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
-};
+}
 
 export function ChartAreaInteractive() {
-  const [activeSeries, setActiveSeries] = React.useState<string[]>(
-    series.map((s) => s.key)
-  );
-
-  const toggleSeries = (key: string) => {
-    setActiveSeries((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    );
-  };
+  const [activeCompany, setActiveCompany] = useState<string | null>(null);
 
   return (
-    <Card className="border-0 bg-transparent shadow-none">
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <CardTitle className="text-[14px] font-semibold tracking-tight">
-              Tren Premi Bruto Industri Asuransi Jiwa 2024
-            </CardTitle>
-            <CardDescription className="text-[12px] mt-0.5">
-              Per kuartal · Sumber: AAJI · 5 perusahaan terbesar
-            </CardDescription>
-          </div>
-          <div className="flex flex-wrap gap-1.5 justify-end">
-            {series.map((s) => (
-              <button
-                key={s.key}
-                onClick={() => toggleSeries(s.key)}
-                className={cn(
-                  "flex items-center gap-1.5 px-2 py-1 rounded text-[11px] border transition-colors",
-                  activeSeries.includes(s.key)
-                    ? "border-border/60 bg-card/60 text-foreground"
-                    : "border-border/20 bg-transparent text-muted-foreground/40"
-                )}
-              >
-                <div
-                  className="h-2 w-2 rounded-full"
-                  style={{ background: activeSeries.includes(s.key) ? s.color : "currentColor" }}
-                />
-                {s.label}
-              </button>
-            ))}
-          </div>
+    <div className="p-6">
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h3 className="text-[14px] font-semibold text-foreground tracking-tight">
+            Tren Premi Bruto · 5 Perusahaan Terbesar
+          </h3>
+          <p className="text-[12px] text-muted-foreground mt-1">
+            Per kuartal 2024 · dalam triliun Rupiah · sumber AAJI
+          </p>
         </div>
-      </CardHeader>
-      <CardContent className="px-2 pb-4">
-        <ResponsiveContainer width="100%" height={240}>
-          <AreaChart data={chartData} margin={{ left: 8, right: 8, top: 4, bottom: 0 }}>
+        <div className="flex items-center gap-1">
+          {companies.map((c) => (
+            <button
+              key={c.name}
+              onMouseEnter={() => setActiveCompany(c.name)}
+              onMouseLeave={() => setActiveCompany(null)}
+              className={cn(
+                "flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] transition-all hover:bg-muted/40",
+                activeCompany && activeCompany !== c.name && "opacity-40"
+              )}
+            >
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
+              <span className={cn("text-foreground", c.isHighlight && "font-semibold")}>
+                {c.name}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="h-[280px] -ml-2">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
-              {series.map((s) => (
-                <linearGradient key={s.key} id={`fill-${s.key}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={s.color} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={s.color} stopOpacity={0.02} />
+              {companies.map((c) => (
+                <linearGradient key={c.name} id={`grad-${c.name.replace(/\s/g, "")}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={c.color} stopOpacity={c.isHighlight ? 0.4 : 0.15} />
+                  <stop offset="100%" stopColor={c.color} stopOpacity={0} />
                 </linearGradient>
               ))}
             </defs>
-            <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.4} />
+            <CartesianGrid strokeDasharray="0" stroke="#1f1f25" vertical={false} />
             <XAxis
               dataKey="quarter"
+              stroke="#71717a"
+              fontSize={11}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+              tick={{ fontFamily: "var(--font-jetbrains-mono)" }}
             />
             <YAxis
+              stroke="#71717a"
+              fontSize={11}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-              tickFormatter={(v) => `Rp ${v}T`}
-              width={52}
+              tick={{ fontFamily: "var(--font-jetbrains-mono)" }}
+              tickFormatter={(v) => `${v.toFixed(1)}T`}
+              width={40}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: "var(--border)", strokeWidth: 1 }} />
-            {series.map((s) =>
-              activeSeries.includes(s.key) ? (
-                <Area
-                  key={s.key}
-                  dataKey={s.key}
-                  name={s.label}
-                  type="monotone"
-                  stroke={s.color}
-                  strokeWidth={1.5}
-                  fill={`url(#fill-${s.key})`}
-                  dot={{ r: 3, fill: s.color, strokeWidth: 0 }}
-                  activeDot={{ r: 4, fill: s.color, strokeWidth: 0 }}
-                />
-              ) : null
-            )}
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={{ stroke: "#27272a", strokeWidth: 1, strokeDasharray: "4 4" }}
+            />
+            {companies.map((c) => (
+              <Area
+                key={c.name}
+                type="monotone"
+                dataKey={c.name}
+                stroke={c.color}
+                strokeWidth={c.isHighlight ? 2 : 1.5}
+                fill={`url(#grad-${c.name.replace(/\s/g, "")})`}
+                opacity={activeCompany === null ? 1 : activeCompany === c.name ? 1 : 0.25}
+                dot={c.isHighlight ? { r: 3, fill: c.color, strokeWidth: 0 } : false}
+                activeDot={{ r: 4, fill: c.color, strokeWidth: 2, stroke: "#0a0a0c" }}
+              />
+            ))}
           </AreaChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

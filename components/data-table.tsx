@@ -1,455 +1,233 @@
 "use client";
 
-import * as React from "react";
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type UniqueIdentifier,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type Row,
-  type SortingState,
-  type VisibilityState,
-} from "@tanstack/react-table";
-import { z } from "zod";
-import { GripVerticalIcon, TrendingUp, TrendingDown, Columns3Icon, ChevronDownIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useState, useMemo } from "react";
+import { Search, ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const schema = z.object({
-  id: z.number(),
-  company: z.string(),
-  premium: z.number(),
-  marketShare: z.number(),
-  rbc: z.number(),
-  growth: z.number(),
-  channel: z.string(),
-});
-
-type Row_ = z.infer<typeof schema>;
-
-function DragHandle({ id }: { id: number }) {
-  const { attributes, listeners } = useSortable({ id });
-  return (
-    <Button
-      {...attributes}
-      {...listeners}
-      variant="ghost"
-      size="icon"
-      className="size-7 text-muted-foreground hover:bg-transparent cursor-grab"
-    >
-      <GripVerticalIcon className="size-3 text-muted-foreground" />
-      <span className="sr-only">Drag to reorder</span>
-    </Button>
-  );
+interface CompanyRow {
+  rank: number;
+  company: string;
+  ticker: string;
+  premium: number;
+  marketShare: number;
+  rbc: number;
+  growth: number;
+  channel: string;
 }
 
-function RBCBadge({ value }: { value: number }) {
-  const color =
-    value > 250
-      ? "bg-accent/10 text-accent border-accent/20"
-      : value >= 200
-      ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-      : "bg-destructive/10 text-destructive border-destructive/20";
-  return (
-    <span
-      className={cn(
-        "inline-flex px-2 py-0.5 rounded text-[11px] font-medium tabular-nums border",
-        color
-      )}
-    >
-      {value.toLocaleString("id-ID")}%
-    </span>
-  );
-}
-
-function ChannelChip({ channel }: { channel: string }) {
-  const colors: Record<string, string> = {
-    Agency: "bg-primary/10 text-primary border-primary/20",
-    Bancassurance: "bg-chart-2/10 text-chart-2 border-chart-2/20",
-    "Multi-channel": "bg-chart-3/10 text-chart-3 border-chart-3/20",
-    Digital: "bg-chart-4/10 text-chart-4 border-chart-4/20",
-  };
-  return (
-    <span
-      className={cn(
-        "inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border",
-        colors[channel] ?? "bg-muted/40 text-muted-foreground border-border/40"
-      )}
-    >
-      {channel}
-    </span>
-  );
-}
-
-const columns: ColumnDef<Row_>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          indeterminate={
-            table.getIsSomePageRowsSelected() &&
-            !table.getIsAllPageRowsSelected()
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "company",
-    header: "Company",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        {row.original.company === "BRI Life" && (
-          <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-        )}
-        <span
-          className={cn(
-            "text-[13px]",
-            row.original.company === "BRI Life"
-              ? "font-semibold text-foreground"
-              : "text-foreground"
-          )}
-        >
-          {row.original.company}
-        </span>
-      </div>
-    ),
-    enableHiding: false,
-  },
-  {
-    accessorKey: "premium",
-    header: () => <div className="text-right">Q4 Premium (Rp T)</div>,
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums text-[13px]">
-        {row.original.premium.toFixed(1)}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "marketShare",
-    header: () => <div className="text-right">Market Share</div>,
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums text-[13px]">
-        {row.original.marketShare.toFixed(1)}%
-      </div>
-    ),
-  },
-  {
-    accessorKey: "rbc",
-    header: () => <div className="text-right">RBC</div>,
-    cell: ({ row }) => (
-      <div className="text-right">
-        <RBCBadge value={row.original.rbc} />
-      </div>
-    ),
-  },
-  {
-    accessorKey: "growth",
-    header: () => <div className="text-right">Growth YoY</div>,
-    cell: ({ row }) => {
-      const g = row.original.growth;
-      return (
-        <div className="flex items-center justify-end gap-1">
-          {g >= 0 ? (
-            <TrendingUp className="h-3 w-3 text-accent" />
-          ) : (
-            <TrendingDown className="h-3 w-3 text-destructive" />
-          )}
-          <span
-            className={cn(
-              "tabular-nums text-[13px]",
-              g >= 0 ? "text-accent" : "text-destructive"
-            )}
-          >
-            {g >= 0 ? "+" : ""}
-            {g.toFixed(1)}%
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "channel",
-    header: "Channel",
-    cell: ({ row }) => <ChannelChip channel={row.original.channel} />,
-  },
+const rows: CompanyRow[] = [
+  { rank: 1, company: "Prudential Life Assurance", ticker: "PRU", premium: 5.89, marketShare: 16.2, rbc: 412, growth: 8.6, channel: "Agency" },
+  { rank: 2, company: "Allianz Life Indonesia", ticker: "AZLI", premium: 4.65, marketShare: 12.8, rbc: 387, growth: 6.7, channel: "Agency" },
+  { rank: 3, company: "Manulife Indonesia", ticker: "MFC", premium: 4.21, marketShare: 11.6, rbc: 356, growth: 5.3, channel: "Bancassurance" },
+  { rank: 4, company: "AIA Financial", ticker: "AIA", premium: 3.85, marketShare: 10.6, rbc: 445, growth: 4.2, channel: "Agency" },
+  { rank: 5, company: "Sequis Life", ticker: "SEQ", premium: 2.94, marketShare: 8.1, rbc: 298, growth: 3.1, channel: "Agency" },
+  { rank: 6, company: "BRI Life", ticker: "BRIL", premium: 0.84, marketShare: 3.14, rbc: 435, growth: 11.0, channel: "Bancassurance" },
+  { rank: 7, company: "Sinarmas MSIG Life", ticker: "SMIG", premium: 2.31, marketShare: 6.4, rbc: 267, growth: 2.8, channel: "Multi-channel" },
+  { rank: 8, company: "Bumiputera 1912", ticker: "ABPU", premium: 1.87, marketShare: 5.2, rbc: 178, growth: -1.4, channel: "Agency" },
+  { rank: 9, company: "Mandiri Inhealth", ticker: "MNHI", premium: 1.62, marketShare: 4.5, rbc: 312, growth: 7.2, channel: "Bancassurance" },
+  { rank: 10, company: "Cigna Indonesia", ticker: "CIGNA", premium: 1.18, marketShare: 3.3, rbc: 289, growth: 1.9, channel: "Digital" },
 ];
 
-function DraggableRow({ row }: { row: Row<Row_> }) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
-  });
-  const isBRILife = row.original.company === "BRI Life";
+const channelColors: Record<string, string> = {
+  Agency: "text-[#00d4ff] bg-[#00d4ff]/10 border-[#00d4ff]/20",
+  Bancassurance: "text-[#10b981] bg-[#10b981]/10 border-[#10b981]/20",
+  "Multi-channel": "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/20",
+  Digital: "text-[#a855f7] bg-[#a855f7]/10 border-[#a855f7]/20",
+};
+
+function RBCIndicator({ value }: { value: number }) {
+  const color =
+    value >= 400
+      ? "text-[#10b981] bg-[#10b981]/10 border-[#10b981]/20"
+      : value >= 300
+      ? "text-[#00d4ff] bg-[#00d4ff]/10 border-[#00d4ff]/20"
+      : value >= 200
+      ? "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/20"
+      : "text-[#f43f5e] bg-[#f43f5e]/10 border-[#f43f5e]/20";
   return (
-    <TableRow
-      data-state={row.getIsSelected() && "selected"}
-      data-dragging={isDragging}
-      ref={setNodeRef}
-      className={cn(
-        "relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 transition-colors",
-        isBRILife && "bg-primary/5 border-l-2 border-l-primary/40"
-      )}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
-    >
-      {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      ))}
-    </TableRow>
+    <span className={cn("inline-flex px-2 py-0.5 rounded text-[11px] font-medium font-numeric border", color)}>
+      {value}%
+    </span>
   );
 }
 
-export function DataTable({ data: initialData }: { data: Row_[] }) {
-  const [data, setData] = React.useState(() => initialData);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
-  const sortableId = React.useId();
+type SortKey = keyof CompanyRow;
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
+function SortHeader({
+  label,
+  sortKey,
+  current,
+  dir,
+  onSort,
+  align = "right",
+}: {
+  label: string;
+  sortKey: SortKey;
+  current: SortKey | null;
+  dir: "asc" | "desc";
+  onSort: (key: SortKey) => void;
+  align?: "left" | "right";
+}) {
+  return (
+    <button
+      onClick={() => onSort(sortKey)}
+      className={cn(
+        "flex items-center gap-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors",
+        align === "right" && "ml-auto"
+      )}
+    >
+      {label}
+      <ArrowUpDown
+        className={cn(
+          "h-3 w-3",
+          current === sortKey ? "text-primary" : "text-muted-foreground/40"
+        )}
+      />
+    </button>
   );
+}
 
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
-    [data]
-  );
+export function DataTable() {
+  const [filter, setFilter] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey | null>("rank");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
-    getRowId: (row) => row.id.toString(),
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-  });
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
     }
   }
 
+  const filtered = useMemo(() => {
+    let result = rows.filter(
+      (r) =>
+        r.company.toLowerCase().includes(filter.toLowerCase()) ||
+        r.ticker.toLowerCase().includes(filter.toLowerCase())
+    );
+    if (sortKey) {
+      result = [...result].sort((a, b) => {
+        const av = a[sortKey];
+        const bv = b[sortKey];
+        const cmp = typeof av === "number" && typeof bv === "number" ? av - bv : String(av).localeCompare(String(bv));
+        return sortDir === "asc" ? cmp : -cmp;
+      });
+    }
+    return result;
+  }, [filter, sortKey, sortDir]);
+
   return (
-    <div className="w-full flex flex-col gap-4 px-6 pb-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium text-foreground">
+    <div className="w-full">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/60">
+        <div>
+          <span className="text-[13px] font-semibold text-foreground tracking-tight">
             Top 10 Perusahaan Asuransi Jiwa
           </span>
-          <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-muted-foreground">
-            Q4 2024 · OJK
-          </Badge>
+          <span className="ml-2 text-[11px] text-muted-foreground">Q4 2024 · OJK</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder="Filter company..."
-            value={(table.getColumn("company")?.getFilterValue() as string) ?? ""}
-            onChange={(e) =>
-              table.getColumn("company")?.setFilterValue(e.target.value)
-            }
-            className="h-7 w-40 text-[12px] bg-card/40 border-border/60"
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
+          <input
+            type="text"
+            placeholder="Filter..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="h-7 w-36 pl-8 pr-3 rounded-md bg-card border border-border/60 text-[12px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/60 transition-colors"
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={<Button variant="outline" size="sm" className="h-7 text-[12px]" />}
-            >
-              <Columns3Icon className="h-3.5 w-3.5" />
-              Columns
-              <ChevronDownIcon className="h-3.5 w-3.5" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-36">
-              {table
-                .getAllColumns()
-                .filter((col) => typeof col.accessorFn !== "undefined" && col.getCanHide())
-                .map((col) => (
-                  <DropdownMenuCheckboxItem
-                    key={col.id}
-                    className="capitalize text-[12px]"
-                    checked={col.getIsVisible()}
-                    onCheckedChange={(value) => col.toggleVisibility(!!value)}
-                  >
-                    {col.id}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border/60">
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis]}
-          onDragEnd={handleDragEnd}
-          sensors={sensors}
-          id={sortableId}
-        >
-          <Table>
-            <TableHeader className="sticky top-0 z-10 bg-card/80 backdrop-blur-sm">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-border/60">
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
-                  {table.getRowModel().rows.map((row) => (
-                    <DraggableRow key={row.id} row={row} />
-                  ))}
-                </SortableContext>
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-[13px] text-muted-foreground">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </DndContext>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-border/60">
+              <th className="px-4 py-2.5 text-left w-8">
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">#</span>
+              </th>
+              <th className="px-4 py-2.5 text-left">
+                <SortHeader label="Company" sortKey="company" current={sortKey} dir={sortDir} onSort={handleSort} align="left" />
+              </th>
+              <th className="px-4 py-2.5 text-right">
+                <SortHeader label="Premium (Rp T)" sortKey="premium" current={sortKey} dir={sortDir} onSort={handleSort} />
+              </th>
+              <th className="px-4 py-2.5 text-right">
+                <SortHeader label="Mkt Share" sortKey="marketShare" current={sortKey} dir={sortDir} onSort={handleSort} />
+              </th>
+              <th className="px-4 py-2.5 text-right">
+                <SortHeader label="RBC" sortKey="rbc" current={sortKey} dir={sortDir} onSort={handleSort} />
+              </th>
+              <th className="px-4 py-2.5 text-right">
+                <SortHeader label="Growth YoY" sortKey="growth" current={sortKey} dir={sortDir} onSort={handleSort} />
+              </th>
+              <th className="px-4 py-2.5 text-left">
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Channel</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((row) => {
+              const isBRI = row.ticker === "BRIL";
+              return (
+                <tr
+                  key={row.rank}
+                  className={cn(
+                    "border-b border-border/40 hover:bg-muted/20 transition-colors group",
+                    isBRI && "bg-primary/5 border-l-2 border-l-primary/50"
+                  )}
+                >
+                  <td className="px-4 py-3">
+                    <span className="text-[12px] font-numeric text-muted-foreground/60">{row.rank}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      {isBRI && <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
+                      <div>
+                        <div className={cn("text-[13px]", isBRI ? "font-semibold text-foreground" : "text-foreground")}>
+                          {row.company}
+                        </div>
+                        <div className="text-[11px] font-numeric text-muted-foreground/60">{row.ticker}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <span className="text-[13px] font-numeric text-foreground">{row.premium.toFixed(2)}</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <span className="text-[13px] font-numeric text-foreground">{row.marketShare.toFixed(1)}%</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <RBCIndicator value={row.rbc} />
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      {row.growth >= 0 ? (
+                        <TrendingUp className="h-3 w-3 text-[#10b981]" />
+                      ) : (
+                        <TrendingDown className="h-3 w-3 text-[#f43f5e]" />
+                      )}
+                      <span className={cn("text-[13px] font-numeric", row.growth >= 0 ? "text-[#10b981]" : "text-[#f43f5e]")}>
+                        {row.growth >= 0 ? "+" : ""}{row.growth.toFixed(1)}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={cn("inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border", channelColors[row.channel] ?? "text-muted-foreground bg-muted/20 border-border/40")}>
+                      {row.channel}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="text-[12px] text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[12px] text-muted-foreground">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </span>
-          <Button
-            variant="outline"
-            className="h-7 w-7 p-0"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronsLeftIcon className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-7 w-7 p-0"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeftIcon className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-7 w-7 p-0"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronRightIcon className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-7 w-7 p-0"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronsRightIcon className="h-3.5 w-3.5" />
-          </Button>
-        </div>
+      <div className="px-4 py-2.5 border-t border-border/60">
+        <span className="text-[11px] text-muted-foreground/60">
+          {filtered.length} of {rows.length} companies
+        </span>
       </div>
     </div>
   );

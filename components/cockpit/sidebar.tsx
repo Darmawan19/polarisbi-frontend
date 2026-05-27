@@ -54,7 +54,7 @@ export function Sidebar() {
             "hover:bg-sidebar-accent transition-colors group"
           )}
         >
-          <div className="h-7 w-7 rounded-md bg-gradient-to-br from-[#0070f3] to-[#7928ca] flex items-center justify-center shrink-0">
+          <div className="h-7 w-7 rounded-md bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center shrink-0">
             <TrendingUp className="h-3.5 w-3.5 text-white" />
           </div>
           <div className="flex-1 text-left min-w-0">
@@ -93,7 +93,7 @@ export function Sidebar() {
                   >
                     <Icon className={cn(
                       "h-3.5 w-3.5 shrink-0",
-                      isActive && "text-[#0070f3]"
+                      isActive && "text-primary"
                     )} />
                     <span className="flex-1 truncate">{item.label}</span>
                     {"shortcut" in item && item.shortcut && (
@@ -127,7 +127,7 @@ export function Sidebar() {
           <span>Settings</span>
         </Link>
         <div className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-sidebar-accent/60 cursor-pointer transition-colors">
-          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#7928ca] to-[#ff0080] flex items-center justify-center text-[10px] font-semibold text-white shrink-0">
+          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center text-[10px] font-semibold text-[#0a0a0c] shrink-0">
             D
           </div>
           <div className="flex-1 min-w-0">

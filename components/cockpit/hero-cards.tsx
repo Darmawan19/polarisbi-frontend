@@ -70,10 +70,10 @@ const cards: HeroCard[] = [
 function ProgressBar({ segments }: { segments: ProgressSegment[] }) {
   const max = Math.max(...segments.map((s) => s.max));
   const colorClass: Record<string, string> = {
-    blue: "bg-[#0070f3]",
-    purple: "bg-[#7928ca]",
-    pink: "bg-[#ff0080]",
-    grey: "bg-[#4a4a4a]",
+    blue: "bg-[#00d4ff]",
+    purple: "bg-[#10b981]",
+    pink: "bg-[#10b981]",
+    grey: "bg-[#2a2a32]",
   };
 
   return (
@@ -105,8 +105,8 @@ export function HeroCards() {
             <span
               className={cn(
                 "text-[11px] font-medium px-1.5 py-0.5 rounded tabular-nums",
-                card.deltaType === "positive" && "text-[#0070f3]",
-                card.deltaType === "negative" && "text-[#ff0080]",
+                card.deltaType === "positive" && "text-[#10b981]",
+                card.deltaType === "negative" && "text-[#f43f5e]",
                 card.deltaType === "neutral" && "text-muted-foreground"
               )}
             >
@@ -145,7 +145,7 @@ export function HeroCards() {
             {card.footerLink && (
               <>
                 {". "}
-                <a className="text-[#0070f3] hover:text-[#0070f3]/80 transition-colors cursor-pointer">
+                <a className="text-primary hover:text-primary/80 transition-colors cursor-pointer">
                   {card.footerLink}
                 </a>
                 {"."}
