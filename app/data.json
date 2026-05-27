@@ -1,0 +1,12 @@
+[
+  { "id": 1, "company": "Prudential Life", "premium": 23.0, "marketShare": 11.5, "rbc": 459, "growth": 8.2,  "channel": "Agency"        },
+  { "id": 2, "company": "Allianz Life",    "premium": 18.5, "marketShare": 9.2,  "rbc": 391, "growth": 12.1, "channel": "Bancassurance" },
+  { "id": 3, "company": "Manulife",        "premium": 16.1, "marketShare": 8.0,  "rbc": 367, "growth": 9.4,  "channel": "Bancassurance" },
+  { "id": 4, "company": "AIA Financial",  "premium": 15.2, "marketShare": 7.6,  "rbc": 412, "growth": 6.8,  "channel": "Multi-channel" },
+  { "id": 5, "company": "BRI Life",        "premium": 8.9,  "marketShare": 4.4,  "rbc": 434, "growth": 42.1, "channel": "Bancassurance" },
+  { "id": 6, "company": "AXA Mandiri",     "premium": 7.8,  "marketShare": 3.9,  "rbc": 312, "growth": 7.5,  "channel": "Bancassurance" },
+  { "id": 7, "company": "FWD Insurance",   "premium": 6.5,  "marketShare": 3.2,  "rbc": 298, "growth": 18.4, "channel": "Digital"       },
+  { "id": 8, "company": "Sinarmas MSIG",   "premium": 6.1,  "marketShare": 3.0,  "rbc": 245, "growth": 6.9,  "channel": "Multi-channel" },
+  { "id": 9, "company": "Sequis Life",     "premium": 5.2,  "marketShare": 2.6,  "rbc": 285, "growth": 4.1,  "channel": "Agency"        },
+  { "id": 10,"company": "Sun Life",        "premium": 4.9,  "marketShare": 2.4,  "rbc": 271, "growth": 5.3,  "channel": "Agency"        }
+]
