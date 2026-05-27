@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Sparkles,
@@ -11,7 +12,6 @@ import {
   Settings,
   ChevronsUpDown,
   Home,
-  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
@@ -56,8 +56,15 @@ export function Sidebar() {
             "hover:bg-sidebar-accent transition-colors group"
           )}
         >
-          <div className="h-7 w-7 rounded-md bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center shrink-0">
-            <TrendingUp className="h-3.5 w-3.5 text-[#0a0a0c]" />
+          <div className="h-7 w-7 rounded-md bg-white flex items-center justify-center shrink-0 overflow-hidden ring-1 ring-border/40">
+            <Image
+              src="/logo.png"
+              alt="PolarisBI"
+              width={28}
+              height={28}
+              className="h-full w-full object-cover"
+              priority
+            />
           </div>
           <div className="flex-1 text-left min-w-0">
             <div className="text-[13px] font-semibold text-foreground truncate">
