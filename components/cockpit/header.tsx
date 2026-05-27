@@ -1,21 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Calendar } from "lucide-react";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { cn } from "@/lib/utils";
 
-export function Header({ title }: { title?: string }) {
+export function Header() {
   const [isMac, setIsMac] = useState(false);
+  const [time, setTime] = useState("");
 
   useEffect(() => {
     setIsMac(navigator.platform.toLowerCase().includes("mac"));
+
+    const updateTime = () => {
+      const now = new Date();
+      setTime(
+        now.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        })
+      );
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const triggerCommandPalette = () => {
     const event = new KeyboardEvent("keydown", {
       key: "k",
-      metaKey: isMac,
+      metaKey: true,
       ctrlKey: !isMac,
       bubbles: true,
     });
@@ -23,30 +40,57 @@ export function Header({ title }: { title?: string }) {
   };
 
   return (
-    <header className="h-12 border-b border-border bg-background/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0">
-      <div className="flex items-center gap-3">
-        {title && (
-          <span className="text-[13px] font-medium text-muted-foreground">
-            {title}
+    <header className="h-[60px] border-b border-border bg-background flex items-center justify-between px-6 shrink-0">
+      <div className="flex items-center gap-4">
+        {/* Section context */}
+        <div className="flex items-center gap-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-[#0070f3] animate-pulse" />
+          <span className="text-[13px] font-semibold text-foreground">
+            Industry Pulse
           </span>
-        )}
+          <span className="text-[12px] text-muted-foreground">·</span>
+          <span className="text-[12px] text-muted-foreground tabular-nums">
+            FY 2024
+          </span>
+        </div>
+
+        <div className="h-4 w-px bg-border" />
+
+        {/* Date range */}
+        <button className="flex items-center gap-2 h-7 px-2.5 rounded-md hover:bg-muted/40 transition-colors">
+          <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-[12px] text-foreground tabular-nums">
+            Jan 1 — Dec 31, 2024
+          </span>
+        </button>
+      </div>
+
+      <div className="flex items-center gap-3">
+        {/* Ask AI command */}
         <button
           onClick={triggerCommandPalette}
           className={cn(
-            "flex items-center gap-2 h-7 px-3 rounded-md",
-            "border border-border/60 bg-card/40 hover:bg-card/70",
-            "text-[12px] text-muted-foreground hover:text-foreground transition-colors"
+            "flex items-center gap-2 h-8 px-3 rounded-md",
+            "border border-border bg-card hover:bg-muted/40",
+            "text-[12px] text-muted-foreground hover:text-foreground transition-all"
           )}
         >
           <Sparkles className="h-3 w-3" />
-          <span>Ask anything about your data...</span>
-          <kbd className="ml-4 px-1.5 py-0.5 rounded text-[10px] bg-muted/40 border border-border/40 font-mono">
+          <span>Ask anything...</span>
+          <kbd className="ml-6 px-1.5 py-0.5 rounded text-[10px] bg-muted/60 border border-border font-mono">
             {isMac ? "⌘K" : "Ctrl+K"}
           </kbd>
         </button>
-      </div>
-      <div className="flex items-center gap-2">
-        <LanguageSwitcher />
+
+        <div className="h-4 w-px bg-border" />
+
+        {/* Live time */}
+        <div className="flex items-center gap-2">
+          <div className="text-[11px] text-muted-foreground tabular-nums">
+            {time}
+          </div>
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );
