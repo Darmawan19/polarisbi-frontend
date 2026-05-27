@@ -9,8 +9,11 @@ import {
   Database,
   AlertTriangle,
   Check,
+  User,
+  Activity,
 } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
+import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import type { Language } from "@/lib/i18n/dictionary";
@@ -35,6 +38,7 @@ export default function SettingsPage() {
             : "Configure appearance, AI model, data sources, and notification preferences."
         }
         icon={<SettingsIcon className="h-5 w-5" />}
+        breadcrumb={[{ label: lang === "id" ? "Pengaturan" : "Settings" }]}
       />
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
@@ -293,6 +297,14 @@ export default function SettingsPage() {
             </div>
           </Section>
 
+          <hr className="my-8 border-border/40" />
+          <RelatedPages
+            links={[
+              { label: "Profile", href: "/profile", icon: User, description: "View user info and activity" },
+              { label: "Data Schema", href: "/data-schema", icon: Database, description: "Browse data sources" },
+              { label: "Industry Pulse", href: "/", icon: Activity, description: "Back to dashboard" },
+            ]}
+          />
         </div>
       </div>
     </div>

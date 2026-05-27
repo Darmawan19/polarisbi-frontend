@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Clock, CheckCircle2, XCircle, Sparkles, BookOpen, Activity } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
+import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
@@ -64,6 +65,7 @@ export default function QueryHistoryPage() {
         }
         badge={`${MOCK_HISTORY.length} ${lang === "id" ? "kueri" : "queries"}`}
         icon={<Clock className="h-5 w-5" />}
+        breadcrumb={[{ label: lang === "id" ? "Riwayat Query" : "Query History" }]}
         action={
           <div className="inline-flex items-center rounded-md border border-border/60 p-0.5 text-[11px]">
             {(["all", "complete", "error"] as FilterType[]).map((f) => (
@@ -149,6 +151,14 @@ export default function QueryHistoryPage() {
               </div>
             )}
           </div>
+          <hr className="my-8 border-border/40" />
+          <RelatedPages
+            links={[
+              { label: "Ask AI", href: "/ask-ai", icon: Sparkles, description: "Start a new natural-language query" },
+              { label: "KPI Glossary", href: "/kpi-glossary", icon: BookOpen, description: "Look up insurance metric definitions" },
+              { label: "Industry Pulse", href: "/", icon: Activity, description: "Back to main dashboard" },
+            ]}
+          />
         </div>
       </div>
     </div>

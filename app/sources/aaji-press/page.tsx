@@ -1,7 +1,8 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { FileText, Activity } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
+import { RelatedPages } from "@/components/cockpit/related-pages";
 import { SourceDocumentsList, type SourceDocument } from "@/components/cockpit/source-documents-list";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -34,11 +35,20 @@ export default function AAJIPressPage() {
         }
         badge={`${AAJI_DOCS.length} ${lang === "id" ? "dokumen" : "documents"}`}
         icon={<FileText className="h-5 w-5" />}
+        breadcrumb={[{ label: "Sources" }, { label: "AAJI Press" }]}
       />
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
         <div className="max-w-7xl mx-auto">
           <SourceDocumentsList documents={AAJI_DOCS} />
+          <hr className="my-8 border-border/40" />
+          <RelatedPages
+            links={[
+              { label: "OJK Statistics", href: "/sources/ojk-statistics", icon: FileText, description: "Regulatory data source" },
+              { label: "BRI Life Reports", href: "/sources/bri-life-reports", icon: FileText, description: "Company-specific documents" },
+              { label: "Industry Pulse", href: "/", icon: Activity, description: "Industry-wide dashboard" },
+            ]}
+          />
         </div>
       </div>
     </div>

@@ -10,8 +10,11 @@ import {
   Database,
   BookOpen,
   FileText,
+  Settings as SettingsIcon,
+  History,
 } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
+import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 import type { LucideIcon } from "lucide-react";
 
@@ -39,6 +42,7 @@ export default function ProfilePage() {
             : "Account information, usage statistics, and activity log."
         }
         icon={<User className="h-5 w-5" />}
+        breadcrumb={[{ label: lang === "id" ? "Profil" : "Profile" }]}
       />
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
@@ -143,6 +147,14 @@ export default function ProfilePage() {
             </div>
           </div>
 
+          <hr className="my-8 border-border/40" />
+          <RelatedPages
+            links={[
+              { label: "Settings", href: "/settings", icon: SettingsIcon, description: "Adjust preferences" },
+              { label: "Query History", href: "/query-history", icon: History, description: "Review past activity" },
+              { label: "Industry Pulse", href: "/", icon: Activity, description: "Back to dashboard" },
+            ]}
+          />
         </div>
       </div>
     </div>

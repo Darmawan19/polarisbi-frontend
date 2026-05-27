@@ -1,7 +1,8 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { FileText, Database } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
+import { RelatedPages } from "@/components/cockpit/related-pages";
 import { SourceDocumentsList, type SourceDocument } from "@/components/cockpit/source-documents-list";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -115,11 +116,20 @@ export default function OJKStatisticsPage() {
         }
         badge={`${OJK_DOCS.length} ${lang === "id" ? "dokumen" : "documents"}`}
         icon={<FileText className="h-5 w-5" />}
+        breadcrumb={[{ label: "Sources" }, { label: "OJK Statistics" }]}
       />
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
         <div className="max-w-7xl mx-auto">
           <SourceDocumentsList documents={OJK_DOCS} />
+          <hr className="my-8 border-border/40" />
+          <RelatedPages
+            links={[
+              { label: "AAJI Press", href: "/sources/aaji-press", icon: FileText, description: "Industry association releases" },
+              { label: "BRI Life Reports", href: "/sources/bri-life-reports", icon: FileText, description: "Company-specific documents" },
+              { label: "Data Schema", href: "/data-schema", icon: Database, description: "How sources map to tables" },
+            ]}
+          />
         </div>
       </div>
     </div>

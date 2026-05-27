@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useCallback, type KeyboardEvent } from "react";
-import { Sparkles, Send, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Sparkles, Send, Clock, CheckCircle2, XCircle, History, BookOpen, Database } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
+import { RelatedPages } from "@/components/cockpit/related-pages";
 import { AskResult } from "@/components/cockpit/ask-result";
 import { useAskStream } from "@/hooks/use-ask-stream";
 import { useI18n } from "@/lib/i18n/context";
@@ -72,6 +73,7 @@ export default function AskAIPage() {
         }
         badge="Claude Sonnet 4.6"
         icon={<Sparkles className="h-5 w-5" />}
+        breadcrumb={[{ label: lang === "id" ? "Tanya AI" : "Ask AI" }]}
       />
 
       <div className="flex-1 overflow-y-auto">
@@ -166,6 +168,19 @@ export default function AskAIPage() {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="px-8 pb-8">
+        <div className="max-w-7xl mx-auto">
+          <hr className="my-8 border-border/40" />
+          <RelatedPages
+            links={[
+              { label: "Query History", href: "/query-history", icon: History, description: "View past queries and results" },
+              { label: "KPI Glossary", href: "/kpi-glossary", icon: BookOpen, description: "Look up insurance metric definitions" },
+              { label: "Data Schema", href: "/data-schema", icon: Database, description: "Browse available tables and columns" },
+            ]}
+          />
         </div>
       </div>
 

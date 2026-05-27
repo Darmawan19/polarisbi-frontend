@@ -141,6 +141,9 @@ export const dictionary = {
   askResultNoDataYet: { id: "Belum ada data", en: "No data yet" },
   askResultNewQuery: { id: "Query baru", en: "New query" },
 
+  // Navigation
+  backToDashboard: { id: "Dashboard", en: "Dashboard" },
+
   // Command palette
   cmdPlaceholder: { id: "Tanya apa saja tentang data asuransi...", en: "Ask anything about insurance data..." },
   cmdSuggestedHeading: { id: "Pertanyaan Saran", en: "Suggested Questions" },
