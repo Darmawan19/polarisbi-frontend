@@ -1,41 +1,174 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: oklch(0.145 0.02 250);
-  --foreground: oklch(0.985 0.005 250);
-  --card: oklch(0.18 0.025 250);
-  --card-foreground: oklch(0.985 0.005 250);
-  --popover: oklch(0.20 0.025 250);
-  --popover-foreground: oklch(0.985 0.005 250);
-  --primary: oklch(0.70 0.18 250);
-  --primary-foreground: oklch(0.145 0.02 250);
-  --secondary: oklch(0.25 0.02 250);
-  --secondary-foreground: oklch(0.985 0.005 250);
-  --muted: oklch(0.25 0.02 250);
-  --muted-foreground: oklch(0.65 0.015 250);
-  --accent: oklch(0.74 0.16 165);
-  --accent-foreground: oklch(0.145 0.02 250);
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.985 0.005 250);
-  --border: oklch(0.22 0.02 250);
-  --input: oklch(0.22 0.02 250);
-  --ring: oklch(0.70 0.18 250);
-  --radius: 0.5rem;
-  --chart-1: oklch(0.70 0.18 250);
-  --chart-2: oklch(0.74 0.16 165);
-  --chart-3: oklch(0.78 0.13 80);
-  --chart-4: oklch(0.62 0.20 320);
-  --chart-5: oklch(0.65 0.18 30);
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Vercel-aligned dark palette — pure black, blue/purple/pink accent */
+:root {
+  --background: #000000;
+  --foreground: #fafafa;
+  --card: #0a0a0a;
+  --card-foreground: #fafafa;
+  --popover: #0a0a0a;
+  --popover-foreground: #fafafa;
+  --primary: #0070f3;
+  --primary-foreground: #fafafa;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #111111;
+  --muted-foreground: #a1a1aa;
+  --accent: #7928ca;
+  --accent-foreground: #fafafa;
+  --destructive: #ff0080;
+  --destructive-foreground: #fafafa;
+  --border: #1f1f1f;
+  --input: #1f1f1f;
+  --ring: #0070f3;
+  --chart-1: #0070f3;
+  --chart-2: #7928ca;
+  --chart-3: #ff0080;
+  --chart-4: #50e3c2;
+  --chart-5: #f5a623;
+  --radius: 0.5rem;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #0070f3;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #1f1f1f;
+  --sidebar-ring: #0070f3;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #fafafa;
+  --card: #0a0a0a;
+  --card-foreground: #fafafa;
+  --popover: #0a0a0a;
+  --popover-foreground: #fafafa;
+  --primary: #0070f3;
+  --primary-foreground: #fafafa;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #111111;
+  --muted-foreground: #a1a1aa;
+  --accent: #7928ca;
+  --accent-foreground: #fafafa;
+  --destructive: #ff0080;
+  --destructive-foreground: #fafafa;
+  --border: #1f1f1f;
+  --input: #1f1f1f;
+  --ring: #0070f3;
+  --chart-1: #0070f3;
+  --chart-2: #7928ca;
+  --chart-3: #ff0080;
+  --chart-4: #50e3c2;
+  --chart-5: #f5a623;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #0070f3;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #1f1f1f;
+  --sidebar-ring: #0070f3;
+}
+
+/* Vercel signature gradients */
+@layer utilities {
+  .gradient-vercel {
+    background: linear-gradient(90deg, #0070f3 0%, #7928ca 50%, #ff0080 100%);
+  }
+  .gradient-vercel-text {
+    background: linear-gradient(90deg, #0070f3 0%, #7928ca 50%, #ff0080 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-progress-base {
+    background: linear-gradient(90deg, #0070f3, #7928ca);
+  }
+  .gradient-progress-overlay {
+    background: linear-gradient(90deg, #7928ca, #ff0080);
+  }
+  .gradient-progress-caching {
+    background: linear-gradient(90deg, #4a4a4a, #6a6a6a);
+  }
+  .radial-vercel {
+    background: radial-gradient(ellipse at top, rgba(0, 112, 243, 0.08), transparent 50%);
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
+  font-family: var(--font-geist-sans);
+  font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
 }
