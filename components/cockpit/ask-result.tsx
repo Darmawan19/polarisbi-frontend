@@ -1,7 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { X, Sparkles, Loader2, AlertCircle, Copy, Check, RotateCcw, BookmarkCheck, BookmarkPlus } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  X,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  Copy,
+  Check,
+  RotateCcw,
+  Plus,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
 import { useFindingsStore } from "@/lib/stores/findings";
@@ -37,7 +46,15 @@ function TabButton({
   );
 }
 
-function CopyButton({ text, labelCopy, labelCopied }: { text: string; labelCopy: string; labelCopied: string }) {
+function CopyButton({
+  text,
+  labelCopy,
+  labelCopied,
+}: {
+  text: string;
+  labelCopy: string;
+  labelCopied: string;
+}) {
   const [copied, setCopied] = useState(false);
   function handleCopy() {
     navigator.clipboard.writeText(text).then(() => {
@@ -56,16 +73,231 @@ function CopyButton({ text, labelCopy, labelCopied }: { text: string; labelCopy:
   );
 }
 
-export function AskResult({ state, onClose }: AskResultProps) {
+/**
+ * Shareable body: tabs + tab content + "Add to report" pill.
+ * No fixed-position shell, no close button.
+ * Pass className="flex-1 min-h-0" when inside the slide-in panel to enable
+ * internal scrolling; omit it for inline flow layout.
+ */
+export function AskResultBody({
+  state,
+  className,
+}: {
+  state: AskState;
+  className?: string;
+}) {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("insight");
-  // Reactive lookup — updates when selected toggles from History page too
+
+  // Reset to insight tab whenever a new question is asked
+  useEffect(() => {
+    setTab("insight");
+  }, [state.question]);
+
+  // Reactive — updates when the finding is toggled from History page too
   const finding = useFindingsStore((s) =>
     state.findingId ? s.findings.find((f) => f.id === state.findingId) : undefined
   );
+
   const isStreaming = state.stage === "generating_insight";
-  const isLoading = state.stage === "generating_sql" || state.stage === "executing_sql";
+  const isLoading =
+    state.stage === "generating_sql" || state.stage === "executing_sql";
   const isError = state.stage === "error";
+
+  return (
+    <div className={cn("flex flex-col", className)}>
+      {/* Tabs — never scrolls away */}
+      <div className="flex items-center border-b border-border px-2 shrink-0">
+        <TabButton active={tab === "insight"} onClick={() => setTab("insight")}>
+          {t("askResultTabInsight")}
+        </TabButton>
+        <TabButton active={tab === "results"} onClick={() => setTab("results")}>
+          {t("askResultTabResults")}
+          {state.rows.length > 0 && (
+            <span className="ml-1.5 text-[10px] font-numeric text-muted-foreground/60">
+              {state.rows.length}
+            </span>
+          )}
+        </TabButton>
+        <TabButton active={tab === "sql"} onClick={() => setTab("sql")}>
+          {t("askResultTabSQL")}
+        </TabButton>
+      </div>
+
+      {/* Scrollable content — flex-1 allows panel to scroll; in inline context it just expands */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {/* Insight */}
+        {tab === "insight" && (
+          <div className="p-5">
+            {isError && (
+              <div className="rounded-lg border border-[#f43f5e]/30 bg-[#f43f5e]/8 p-4 flex items-start gap-3 mb-4">
+                <AlertCircle className="h-4 w-4 text-[#f43f5e] shrink-0 mt-0.5" />
+                <p className="text-[13px] text-[#f43f5e]">{state.error}</p>
+              </div>
+            )}
+            {isLoading && !state.insight && (
+              <div className="space-y-3">
+                {[80, 65, 90, 55, 72].map((w, i) => (
+                  <div
+                    key={i}
+                    className="h-3.5 rounded bg-muted/40 animate-pulse"
+                    style={{ width: `${w}%` }}
+                  />
+                ))}
+              </div>
+            )}
+            {!isLoading && !state.insight && !isError && (
+              <p className="text-[13px] text-muted-foreground italic">
+                {t("askResultWaitingInsight")}
+              </p>
+            )}
+            {state.insight && (
+              <div className="text-[14px] text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                {state.insight}
+                {isStreaming && (
+                  <span className="inline-block w-[3px] h-[1.1em] bg-primary/70 animate-pulse ml-0.5 align-text-bottom rounded-sm" />
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Results */}
+        {tab === "results" && (
+          <div>
+            {state.rows.length === 0 ? (
+              <div className="flex items-center justify-center h-40 text-[13px] text-muted-foreground">
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t("askResultRunningQuery")}
+                  </div>
+                ) : (
+                  t("askResultNoResults")
+                )}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-[12px]">
+                  <thead>
+                    <tr className="border-b border-border/60 bg-muted/20">
+                      {state.columns.map((col) => (
+                        <th
+                          key={col}
+                          className="px-4 py-2.5 text-left font-medium text-muted-foreground text-[11px] uppercase tracking-wider whitespace-nowrap"
+                        >
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {state.rows.map((row, i) => (
+                      <tr
+                        key={i}
+                        className={cn(
+                          "border-b border-border/30 hover:bg-muted/10 transition-colors",
+                          i === state.rows.length - 1 && "border-0"
+                        )}
+                      >
+                        {state.columns.map((col) => {
+                          const val = row[col];
+                          const isNum = typeof val === "number";
+                          return (
+                            <td
+                              key={col}
+                              className={cn(
+                                "px-4 py-2.5 text-foreground/80",
+                                isNum && "font-numeric text-right"
+                              )}
+                            >
+                              {val != null ? String(val) : "—"}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SQL */}
+        {tab === "sql" && (
+          <div className="p-5">
+            {!state.sql ? (
+              <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isLoading ? t("askResultGeneratingSql") : t("askResultNoSql")}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-border/60 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 bg-muted/20 border-b border-border/40">
+                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                    {t("askResultGeneratedSql")}
+                  </span>
+                  <CopyButton
+                    text={state.sql}
+                    labelCopy={t("askResultCopy")}
+                    labelCopied={t("askResultCopied")}
+                  />
+                </div>
+                <pre className="p-4 text-[12px] font-mono text-foreground/80 overflow-x-auto leading-relaxed">
+                  {state.sql}
+                </pre>
+              </div>
+            )}
+            {state.interpretation && (
+              <p className="mt-3 text-[12px] text-muted-foreground italic">
+                {state.interpretation}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Add to report pill — shown when done and finding exists */}
+      {state.stage === "done" && finding && (
+        <div className="flex items-center justify-between px-5 py-3 border-t border-border shrink-0">
+          <span className="text-[11px] font-numeric text-muted-foreground/60">
+            {state.rows.length > 0
+              ? t("askResultRowsReturned", { n: state.rows.length })
+              : t("askResultNoDataYet")}
+          </span>
+          <button
+            onClick={() => useFindingsStore.getState().toggleSelected(finding.id)}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border transition-colors",
+              finding.selected
+                ? "bg-cyan-500/15 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/25"
+                : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/40"
+            )}
+          >
+            {finding.selected ? (
+              <Check className="h-3.5 w-3.5" />
+            ) : (
+              <Plus className="h-3.5 w-3.5" />
+            )}
+            {finding.selected ? "In report" : "Add to report"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Slide-in panel — used by the command palette (⌘K) on the dashboard. */
+export function AskResult({ state, onClose }: AskResultProps) {
+  const { t } = useI18n();
+
+  const isError = state.stage === "error";
+  const statusDotColor = isError
+    ? "bg-[#f43f5e]"
+    : state.stage === "done"
+    ? "bg-[#10b981]"
+    : "bg-[#00d4ff] animate-pulse";
 
   const stageLabelMap: Record<AskState["stage"], string> = {
     idle: t("askResultStatusIdle"),
@@ -75,13 +307,6 @@ export function AskResult({ state, onClose }: AskResultProps) {
     done: t("askResultStatusDone"),
     error: t("askResultStatusError"),
   };
-
-  const statusDotColor =
-    isError
-      ? "bg-[#f43f5e]"
-      : state.stage === "done"
-      ? "bg-[#10b981]"
-      : "bg-[#00d4ff] animate-pulse";
 
   return (
     <>
@@ -104,29 +329,13 @@ export function AskResult({ state, onClose }: AskResultProps) {
                 {t("askResultQueryLabel")} #001
               </span>
               <div className={cn("h-1.5 w-1.5 rounded-full", statusDotColor)} />
-              <span className="text-[11px] text-muted-foreground/80">{stageLabelMap[state.stage]}</span>
+              <span className="text-[11px] text-muted-foreground/80">
+                {stageLabelMap[state.stage]}
+              </span>
             </div>
-            <p className="text-[13px] text-foreground leading-snug line-clamp-2">{state.question}</p>
-            {state.stage === "done" && finding && (
-              <div className="mt-1.5">
-                <button
-                  onClick={() => useFindingsStore.getState().toggleSelected(finding.id)}
-                  className={cn(
-                    "flex items-center gap-1.5 text-[11px] px-1.5 py-0.5 rounded transition-colors",
-                    finding.selected
-                      ? "text-cyan-400 hover:text-cyan-300"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {finding.selected ? (
-                    <BookmarkCheck className="h-3.5 w-3.5" />
-                  ) : (
-                    <BookmarkPlus className="h-3.5 w-3.5" />
-                  )}
-                  {finding.selected ? "In report" : "Add to report"}
-                </button>
-              </div>
-            )}
+            <p className="text-[13px] text-foreground leading-snug line-clamp-2">
+              {state.question}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -137,164 +346,11 @@ export function AskResult({ state, onClose }: AskResultProps) {
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex items-center border-b border-border px-2 shrink-0">
-          <TabButton active={tab === "insight"} onClick={() => setTab("insight")}>
-            {t("askResultTabInsight")}
-          </TabButton>
-          <TabButton active={tab === "results"} onClick={() => setTab("results")}>
-            {t("askResultTabResults")}
-            {state.rows.length > 0 && (
-              <span className="ml-1.5 text-[10px] font-numeric text-muted-foreground/60">
-                {state.rows.length}
-              </span>
-            )}
-          </TabButton>
-          <TabButton active={tab === "sql"} onClick={() => setTab("sql")}>
-            {t("askResultTabSQL")}
-          </TabButton>
-        </div>
-
-        {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Insight Tab */}
-          {tab === "insight" && (
-            <div className="p-5">
-              {isError && (
-                <div className="rounded-lg border border-[#f43f5e]/30 bg-[#f43f5e]/8 p-4 flex items-start gap-3 mb-4">
-                  <AlertCircle className="h-4 w-4 text-[#f43f5e] shrink-0 mt-0.5" />
-                  <p className="text-[13px] text-[#f43f5e]">{state.error}</p>
-                </div>
-              )}
-
-              {isLoading && !state.insight && (
-                <div className="space-y-3">
-                  {[80, 65, 90, 55, 72].map((w, i) => (
-                    <div
-                      key={i}
-                      className="h-3.5 rounded bg-muted/40 animate-pulse"
-                      style={{ width: `${w}%` }}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {!isLoading && !state.insight && !isError && (
-                <p className="text-[13px] text-muted-foreground italic">{t("askResultWaitingInsight")}</p>
-              )}
-
-              {state.insight && (
-                <div className="text-[14px] text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                  {state.insight}
-                  {isStreaming && (
-                    <span className="inline-block w-[3px] h-[1.1em] bg-primary/70 animate-pulse ml-0.5 align-text-bottom rounded-sm" />
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Results Tab */}
-          {tab === "results" && (
-            <div>
-              {state.rows.length === 0 ? (
-                <div className="flex items-center justify-center h-40 text-[13px] text-muted-foreground">
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      {t("askResultRunningQuery")}
-                    </div>
-                  ) : (
-                    t("askResultNoResults")
-                  )}
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[12px]">
-                    <thead>
-                      <tr className="border-b border-border/60 bg-muted/20">
-                        {state.columns.map((col) => (
-                          <th
-                            key={col}
-                            className="px-4 py-2.5 text-left font-medium text-muted-foreground text-[11px] uppercase tracking-wider whitespace-nowrap"
-                          >
-                            {col}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {state.rows.map((row, i) => (
-                        <tr
-                          key={i}
-                          className={cn(
-                            "border-b border-border/30 hover:bg-muted/10 transition-colors",
-                            i === state.rows.length - 1 && "border-0"
-                          )}
-                        >
-                          {state.columns.map((col) => {
-                            const val = row[col];
-                            const isNum = typeof val === "number";
-                            return (
-                              <td
-                                key={col}
-                                className={cn(
-                                  "px-4 py-2.5 text-foreground/80",
-                                  isNum && "font-numeric text-right"
-                                )}
-                              >
-                                {val != null ? String(val) : "—"}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* SQL Tab */}
-          {tab === "sql" && (
-            <div className="p-5">
-              {!state.sql ? (
-                <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
-                  {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {isLoading ? t("askResultGeneratingSql") : t("askResultNoSql")}
-                </div>
-              ) : (
-                <div className="rounded-lg border border-border/60 overflow-hidden">
-                  <div className="flex items-center justify-between px-3 py-2 bg-muted/20 border-b border-border/40">
-                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                      {t("askResultGeneratedSql")}
-                    </span>
-                    <CopyButton
-                      text={state.sql}
-                      labelCopy={t("askResultCopy")}
-                      labelCopied={t("askResultCopied")}
-                    />
-                  </div>
-                  <pre className="p-4 text-[12px] font-mono text-foreground/80 overflow-x-auto leading-relaxed">
-                    {state.sql}
-                  </pre>
-                </div>
-              )}
-              {state.interpretation && (
-                <p className="mt-3 text-[12px] text-muted-foreground italic">{state.interpretation}</p>
-              )}
-            </div>
-          )}
-        </div>
+        {/* Body — flex-1 min-h-0 lets internal content scroll within the panel */}
+        <AskResultBody state={state} className="flex-1 min-h-0" />
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-5 py-3 border-t border-border shrink-0">
-          <span className="text-[11px] font-numeric text-muted-foreground/60">
-            {state.rows.length > 0
-              ? t("askResultRowsReturned", { n: state.rows.length })
-              : t("askResultNoDataYet")}
-          </span>
+        <div className="flex items-center justify-end px-5 py-3 border-t border-border shrink-0">
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
