@@ -20,6 +20,7 @@ export interface AskState {
   columns: string[];
   insight: string;
   error: string | null;
+  findingId: string | undefined;
 }
 
 const INITIAL: AskState = {
@@ -31,6 +32,7 @@ const INITIAL: AskState = {
   columns: [],
   insight: "",
   error: null,
+  findingId: undefined,
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -103,9 +105,8 @@ export function useAskStream() {
               localInsight += payload.token;
               setState((s) => ({ ...s, insight: s.insight + payload.token }));
               break;
-            case "done":
-              setState((s) => ({ ...s, stage: "done" }));
-              useFindingsStore.getState().addFinding({
+            case "done": {
+              const usedId = useFindingsStore.getState().addFinding({
                 id: crypto.randomUUID(),
                 question,
                 sql: localSql,
@@ -114,8 +115,10 @@ export function useAskStream() {
                 insight: localInsight,
                 timestamp: Date.now(),
               });
+              setState((s) => ({ ...s, stage: "done", findingId: usedId }));
               console.log("[findings] captured:", question, "— store now has", useFindingsStore.getState().findings.length);
               break;
+            }
             case "error":
               setState((s) => ({
                 ...s,

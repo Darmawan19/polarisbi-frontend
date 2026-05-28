@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useFindingsStore } from "@/lib/stores/findings";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import { fetchReport, triggerDownload } from "@/lib/generate-report";
 
 export function GenerateReport() {
   const [loading, setLoading] = useState(false);
@@ -27,42 +26,20 @@ export function GenerateReport() {
   const findings = useFindingsStore((s) => s.findings);
   const clear = useFindingsStore((s) => s.clear);
   const displayFindings = mounted ? findings : [];
+  const selectedFindings = displayFindings.filter((f) => f.selected);
 
   async function download(kind: string, fmt: string) {
     setLoading(true);
     const id = toast.loading("Generating report…");
     try {
-      const isDocumentWithFindings =
-        kind === "document" && displayFindings.length > 0;
-
-      const res = await fetch(
-        `${API_URL}/api/report?kind=${kind}&fmt=${fmt}`,
-        isDocumentWithFindings
-          ? {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                title: "Insurance Data Briefing",
-                findings: displayFindings.map((f) => ({
-                  question: f.question,
-                  sql: f.sql,
-                })),
-              }),
-            }
-          : { method: "POST" }
+      const { blob, filename } = await fetchReport(
+        kind,
+        fmt,
+        selectedFindings.length > 0
+          ? selectedFindings.map((f) => ({ question: f.question, sql: f.sql }))
+          : undefined
       );
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const blob = await res.blob();
-      const cd = res.headers.get("Content-Disposition") ?? "";
-      const name =
-        cd.match(/filename="?([^"]+)"?/)?.[1] ?? `PolarisBI-${kind}.${fmt}`;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = name;
-      a.click();
-      URL.revokeObjectURL(url);
+      triggerDownload(blob, filename);
       toast.success("Report ready", { id });
     } catch (e) {
       toast.error(
@@ -92,9 +69,16 @@ export function GenerateReport() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
-        {/* Deck — always static */}
+        {/* Deck */}
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Deck</DropdownMenuLabel>
+          <DropdownMenuLabel className="flex items-center gap-1.5">
+            Deck
+            {selectedFindings.length > 0 && (
+              <span className="text-[10px] text-cyan-400/80 font-normal">
+                from {selectedFindings.length} selected
+              </span>
+            )}
+          </DropdownMenuLabel>
           <DropdownMenuItem
             disabled={loading}
             onClick={() => download("deck", "pptx")}
@@ -111,14 +95,13 @@ export function GenerateReport() {
 
         <DropdownMenuSeparator />
 
-        {/* Document — session-aware when findings exist */}
+        {/* Document */}
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex items-center gap-1.5">
             Document
-            {displayFindings.length > 0 && (
+            {selectedFindings.length > 0 && (
               <span className="text-[10px] text-cyan-400/80 font-normal">
-                from {displayFindings.length} finding
-                {displayFindings.length !== 1 ? "s" : ""}
+                from {selectedFindings.length} selected
               </span>
             )}
           </DropdownMenuLabel>
@@ -136,7 +119,7 @@ export function GenerateReport() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
-        {/* Clear findings — only shown when session has data */}
+        {/* Clear — only shown when there are any findings */}
         {displayFindings.length > 0 && (
           <>
             <DropdownMenuSeparator />

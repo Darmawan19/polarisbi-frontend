@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, Sparkles, Loader2, AlertCircle, Copy, Check, RotateCcw } from "lucide-react";
+import { X, Sparkles, Loader2, AlertCircle, Copy, Check, RotateCcw, BookmarkCheck, BookmarkPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
+import { useFindingsStore } from "@/lib/stores/findings";
 import type { AskState } from "@/hooks/use-ask-stream";
 
 interface AskResultProps {
@@ -58,6 +59,10 @@ function CopyButton({ text, labelCopy, labelCopied }: { text: string; labelCopy:
 export function AskResult({ state, onClose }: AskResultProps) {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("insight");
+  // Reactive lookup — updates when selected toggles from History page too
+  const finding = useFindingsStore((s) =>
+    state.findingId ? s.findings.find((f) => f.id === state.findingId) : undefined
+  );
   const isStreaming = state.stage === "generating_insight";
   const isLoading = state.stage === "generating_sql" || state.stage === "executing_sql";
   const isError = state.stage === "error";
@@ -102,6 +107,26 @@ export function AskResult({ state, onClose }: AskResultProps) {
               <span className="text-[11px] text-muted-foreground/80">{stageLabelMap[state.stage]}</span>
             </div>
             <p className="text-[13px] text-foreground leading-snug line-clamp-2">{state.question}</p>
+            {state.stage === "done" && finding && (
+              <div className="mt-1.5">
+                <button
+                  onClick={() => useFindingsStore.getState().toggleSelected(finding.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 text-[11px] px-1.5 py-0.5 rounded transition-colors",
+                    finding.selected
+                      ? "text-cyan-400 hover:text-cyan-300"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {finding.selected ? (
+                    <BookmarkCheck className="h-3.5 w-3.5" />
+                  ) : (
+                    <BookmarkPlus className="h-3.5 w-3.5" />
+                  )}
+                  {finding.selected ? "In report" : "Add to report"}
+                </button>
+              </div>
+            )}
           </div>
           <button
             onClick={onClose}
