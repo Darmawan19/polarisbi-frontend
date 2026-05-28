@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -15,13 +16,6 @@ import {
 import { cn } from "@/lib/utils";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
-const REPORT_OPTIONS = [
-  { label: "Deck — PowerPoint (.pptx)", kind: "deck", fmt: "pptx" },
-  { label: "Deck — PDF", kind: "deck", fmt: "pdf" },
-  { label: "Document — Word (.docx)", kind: "document", fmt: "docx" },
-  { label: "Document — PDF", kind: "document", fmt: "pdf" },
-] as const;
 
 export function GenerateReport() {
   const [loading, setLoading] = useState(false);
@@ -72,20 +66,38 @@ export function GenerateReport() {
         )}
         {loading ? "Generating…" : "Generate Report"}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuLabel className="text-[11px] text-muted-foreground">
-          Export format
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {REPORT_OPTIONS.map(({ label, kind, fmt }) => (
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Deck</DropdownMenuLabel>
           <DropdownMenuItem
-            key={`${kind}-${fmt}`}
-            className="text-[12px] cursor-pointer"
-            onSelect={() => download(kind, fmt)}
+            disabled={loading}
+            onClick={() => download("deck", "pptx")}
           >
-            {label}
+            PowerPoint (.pptx)
           </DropdownMenuItem>
-        ))}
+          <DropdownMenuItem
+            disabled={loading}
+            onClick={() => download("deck", "pdf")}
+          >
+            PDF
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Document</DropdownMenuLabel>
+          <DropdownMenuItem
+            disabled={loading}
+            onClick={() => download("document", "docx")}
+          >
+            Word (.docx)
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={loading}
+            onClick={() => download("document", "pdf")}
+          >
+            PDF
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
