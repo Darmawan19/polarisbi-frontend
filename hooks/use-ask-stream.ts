@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { useFindingsStore } from "@/lib/stores/findings";
 
 export type AskStage =
   | "idle"
@@ -45,6 +46,13 @@ export function useAskStream() {
 
     setState({ ...INITIAL, stage: "generating_sql", question });
 
+    // Local vars mirror the SSE payloads so we can assemble a Finding on done
+    // without relying on React state (which is async and stale in closures).
+    let localSql: string | null = null;
+    let localColumns: string[] = [];
+    let localRowCount = 0;
+    let localInsight = "";
+
     try {
       const res = await fetch(`${API_URL}/api/ask/stream`, {
         method: "POST",
@@ -73,6 +81,7 @@ export function useAskStream() {
               setState((s) => ({ ...s, stage: payload.stage as AskStage }));
               break;
             case "sql":
+              localSql = payload.sql;
               setState((s) => ({
                 ...s,
                 stage: "executing_sql",
@@ -81,6 +90,8 @@ export function useAskStream() {
               }));
               break;
             case "rows":
+              localColumns = payload.columns;
+              localRowCount = payload.rows.length;
               setState((s) => ({
                 ...s,
                 stage: "generating_insight",
@@ -89,10 +100,21 @@ export function useAskStream() {
               }));
               break;
             case "insight_token":
+              localInsight += payload.token;
               setState((s) => ({ ...s, insight: s.insight + payload.token }));
               break;
             case "done":
               setState((s) => ({ ...s, stage: "done" }));
+              useFindingsStore.getState().addFinding({
+                id: crypto.randomUUID(),
+                question,
+                sql: localSql,
+                columns: localColumns,
+                rowCount: localRowCount,
+                insight: localInsight,
+                timestamp: Date.now(),
+              });
+              console.log("[findings] captured:", question, "— store now has", useFindingsStore.getState().findings.length);
               break;
             case "error":
               setState((s) => ({
