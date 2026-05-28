@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles, Calendar } from "lucide-react";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
+import { GenerateReport } from "@/components/cockpit/generate-report";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
@@ -83,6 +84,8 @@ export function Header() {
             {isMac ? "⌘K" : "Ctrl+K"}
           </kbd>
         </button>
+
+        <GenerateReport />
 
         <div className="h-4 w-px bg-border" />
 
