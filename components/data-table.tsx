@@ -30,24 +30,34 @@ const rows: CompanyRow[] = [
   { rank: 10, company: "Cigna Indonesia", ticker: "CIGNA", premium: 1.18, marketShare: 3.3, rbc: 289, growth: 1.9, channel: "Digital" },
 ];
 
+// Day mode: stronger tint + colored border; night mode keeps the original soft tint.
 const channelColors: Record<string, string> = {
-  Agency: "text-signal-info-fg bg-signal-info/10 border-signal-info/20",
-  Bancassurance: "text-signal-up-fg bg-signal-up/10 border-signal-up/20",
-  "Multi-channel": "text-signal-warn-fg bg-signal-warn/10 border-signal-warn/20",
-  Digital: "text-signal-violet-fg bg-signal-violet/10 border-signal-violet/20",
+  Agency: "text-signal-info-fg bg-signal-info/15 border-signal-info/40 dark:bg-signal-info/10 dark:border-signal-info/20",
+  Bancassurance: "text-signal-up-fg bg-signal-up/15 border-signal-up/40 dark:bg-signal-up/10 dark:border-signal-up/20",
+  "Multi-channel": "text-signal-warn-fg bg-signal-warn/20 border-signal-warn/50 dark:bg-signal-warn/10 dark:border-signal-warn/20",
+  Digital: "text-signal-violet-fg bg-signal-violet/15 border-signal-violet/40 dark:bg-signal-violet/10 dark:border-signal-violet/20",
+};
+
+// Small vivid dot inside the channel chip (day mode only)
+const channelDots: Record<string, string> = {
+  Agency: "bg-signal-info",
+  Bancassurance: "bg-signal-up",
+  "Multi-channel": "bg-signal-warn",
+  Digital: "bg-signal-violet",
 };
 
 function RBCIndicator({ value }: { value: number }) {
+  // Day mode: solid saturated chip; night mode: original soft tint.
   const color =
     value >= 400
-      ? "text-signal-up-fg bg-signal-up/10 border-signal-up/20"
+      ? "bg-solid-up text-white border-solid-up dark:text-signal-up-fg dark:bg-signal-up/10 dark:border-signal-up/20"
       : value >= 300
-      ? "text-signal-info-fg bg-signal-info/10 border-signal-info/20"
+      ? "bg-solid-info text-white border-solid-info dark:text-signal-info-fg dark:bg-signal-info/10 dark:border-signal-info/20"
       : value >= 200
-      ? "text-signal-warn-fg bg-signal-warn/10 border-signal-warn/20"
-      : "text-signal-down-fg bg-signal-down/10 border-signal-down/20";
+      ? "bg-solid-warn text-solid-warn-fg border-solid-warn dark:text-signal-warn-fg dark:bg-signal-warn/10 dark:border-signal-warn/20"
+      : "bg-solid-down text-white border-solid-down dark:text-signal-down-fg dark:bg-signal-down/10 dark:border-signal-down/20";
   return (
-    <span className={cn("inline-flex px-2 py-0.5 rounded text-[11px] font-medium font-numeric border", color)}>
+    <span className={cn("inline-flex px-2 py-0.5 rounded text-[11px] font-semibold dark:font-medium font-numeric border", color)}>
       {value}%
     </span>
   );
@@ -291,17 +301,18 @@ export function DataTable() {
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       {row.growth >= 0 ? (
-                        <TrendingUp className="h-3 w-3 text-signal-up-fg" />
+                        <TrendingUp className="h-3.5 w-3.5 text-signal-up dark:h-3 dark:w-3" />
                       ) : (
-                        <TrendingDown className="h-3 w-3 text-signal-down-fg" />
+                        <TrendingDown className="h-3.5 w-3.5 text-signal-down dark:h-3 dark:w-3" />
                       )}
-                      <span className={cn("text-[13px] font-numeric", row.growth >= 0 ? "text-signal-up-fg" : "text-signal-down-fg")}>
+                      <span className={cn("text-[13px] font-numeric font-semibold dark:font-normal", row.growth >= 0 ? "text-signal-up-fg" : "text-signal-down-fg")}>
                         {row.growth >= 0 ? "+" : ""}{row.growth.toFixed(1)}%
                       </span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={cn("inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border", channelColors[row.channel] ?? "text-muted-foreground bg-muted/20 border-border/40")}>
+                    <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold dark:font-medium border", channelColors[row.channel] ?? "text-muted-foreground bg-muted/20 border-border/40")}>
+                      <span className={cn("h-1.5 w-1.5 rounded-full dark:hidden", channelDots[row.channel] ?? "bg-muted-foreground")} />
                       {row.channel}
                     </span>
                   </td>

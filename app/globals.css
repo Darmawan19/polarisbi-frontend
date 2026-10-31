@@ -52,6 +52,12 @@
   --color-signal-warn-fg: var(--signal-warn-fg);
   --color-signal-violet-fg: var(--signal-violet-fg);
   --color-track: var(--track);
+  /* Solid, saturated chip fills for day mode (status badges) */
+  --color-solid-info: var(--solid-info);
+  --color-solid-up: var(--solid-up);
+  --color-solid-down: var(--solid-down);
+  --color-solid-warn: var(--solid-warn);
+  --color-solid-warn-fg: var(--solid-warn-fg);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -86,7 +92,7 @@
   --accent-foreground: var(--brand-blue);
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #c3d1e2;
+  --border: #d9e3ee;
   --input: #c3d1e2;
   --ring: var(--brand-blue);
   --chart-1: var(--brand-blue);
@@ -102,7 +108,7 @@
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e0ecf9;
   --sidebar-accent-foreground: var(--brand-blue);
-  --sidebar-border: #c3d1e2;
+  --sidebar-border: #dbe4ef;
   --sidebar-ring: var(--brand-blue);
   --sidebar-head: var(--brand-blue);
 
@@ -120,7 +126,13 @@
   --signal-up-fg: #046f4f;
   --signal-down-fg: #c42020;
   --signal-warn-fg: #a14a07;
-  --signal-violet-fg: #7c3aed;
+  --signal-violet-fg: #6d28d9;
+  /* Solid chip fills (white text, except warn which uses dark text on amber) */
+  --solid-info: #1d6fe0;
+  --solid-up: #05875a;
+  --solid-down: #dc2626;
+  --solid-warn: #fbbf24;
+  --solid-warn-fg: #3b1d02;
   /* Soft track behind progress bars, and chart gridlines */
   --track: #e1e9f3;
   --chart-grid: #e1e9f3;
@@ -186,6 +198,11 @@
   --signal-warn-fg: var(--signal-warn);
   --signal-violet-fg: var(--signal-violet);
   --track: #15151a;
+  --solid-info: var(--signal-info);
+  --solid-up: var(--signal-up);
+  --solid-down: var(--signal-down);
+  --solid-warn: var(--signal-warn);
+  --solid-warn-fg: var(--signal-warn);
   --chart-grid: var(--border);
   --area-top: 0.4;
   --area-top-soft: 0.15;
@@ -227,7 +244,7 @@ html:not(.dark) .on-header {
    (in @layer components so any explicit shadow-* utility still wins) */
 @layer components {
   html:not(.dark) .bg-card {
-    box-shadow: 0 1px 2px rgba(11, 26, 46, 0.06), 0 1px 3px rgba(11, 26, 46, 0.05);
+    box-shadow: 0 1px 2px rgba(15, 35, 70, 0.07), 0 3px 10px -3px rgba(15, 35, 70, 0.08);
   }
   html:not(.dark) .on-header .bg-card {
     box-shadow: none;
