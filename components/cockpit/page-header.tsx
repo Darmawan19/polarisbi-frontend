@@ -36,7 +36,7 @@ export function PageHeader({
     : [];
 
   return (
-    <div className={cn("border-b border-border/40 px-8 py-6", className)}>
+    <div className={cn("on-header bg-header border-b border-border/40 px-8 py-6", className)}>
       {allCrumbs.length > 0 && (
         <div className="flex items-center gap-1 mb-3 font-mono text-xs tracking-wider text-muted-foreground">
           {allCrumbs.map((crumb, i) => {
@@ -52,7 +52,7 @@ export function PageHeader({
                     {crumb.label}
                   </Link>
                 ) : (
-                  <span className={isLast ? "text-muted-foreground/60" : "hover:text-foreground transition-colors"}>
+                  <span className={isLast ? "text-muted-foreground dark:text-muted-foreground/60" : "hover:text-foreground transition-colors"}>
                     {crumb.label}
                   </span>
                 )}

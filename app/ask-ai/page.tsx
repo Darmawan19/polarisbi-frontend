@@ -198,7 +198,7 @@ export default function AskAIPage() {
             </div>
 
             {recentFindings.length === 0 ? (
-              <p className="text-[11px] text-muted-foreground/60 italic">
+              <p className="text-[11px] text-muted-foreground dark:text-muted-foreground/60 italic">
                 {lang === "id" ? "Belum ada kueri." : "No queries yet."}
               </p>
             ) : (
@@ -235,7 +235,7 @@ export default function AskAIPage() {
                         e.stopPropagation();
                         removeFinding(f.id);
                       }}
-                      className="absolute right-2 top-2.5 opacity-0 group-hover:opacity-100 flex items-center justify-center h-5 w-5 rounded text-muted-foreground/40 hover:text-[#f43f5e] hover:bg-muted/40 transition-all"
+                      className="absolute right-2 top-2.5 opacity-0 group-hover:opacity-100 flex items-center justify-center h-5 w-5 rounded text-muted-foreground/40 hover:text-signal-down-fg hover:bg-muted/40 transition-all"
                       aria-label="Remove"
                     >
                       <X className="h-3 w-3" />

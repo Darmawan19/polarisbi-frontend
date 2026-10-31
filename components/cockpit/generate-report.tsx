@@ -74,7 +74,7 @@ export function GenerateReport() {
           <DropdownMenuLabel className="flex items-center gap-1.5">
             Deck
             {selectedFindings.length > 0 && (
-              <span className="text-[10px] text-cyan-400/80 font-normal">
+              <span className="text-[10px] text-cyan-700 dark:text-cyan-400/80 font-normal">
                 from {selectedFindings.length} selected
               </span>
             )}
@@ -100,7 +100,7 @@ export function GenerateReport() {
           <DropdownMenuLabel className="flex items-center gap-1.5">
             Document
             {selectedFindings.length > 0 && (
-              <span className="text-[10px] text-cyan-400/80 font-normal">
+              <span className="text-[10px] text-cyan-700 dark:text-cyan-400/80 font-normal">
                 from {selectedFindings.length} selected
               </span>
             )}

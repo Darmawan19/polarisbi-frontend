@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Settings as SettingsIcon,
   Moon,
@@ -20,7 +21,11 @@ import type { Language } from "@/lib/i18n/dictionary";
 
 export default function SettingsPage() {
   const { lang, setLang } = useI18n();
-  const [theme, setTheme] = useState<"dark" | "light" | "system">("dark");
+  const { theme, setTheme } = useTheme();
+  // next-themes only knows the stored theme on the client; wait for mount so
+  // the highlighted option matches between server and client render.
+  const [themeReady, setThemeReady] = useState(false);
+  useEffect(() => setThemeReady(true), []);
   const [model, setModel] = useState("claude-sonnet-4-6");
   const [maxTokens, setMaxTokens] = useState(2048);
   const [temperature, setTemperature] = useState(0.3);
@@ -58,10 +63,10 @@ export default function SettingsPage() {
                 ].map((t) => (
                   <button
                     key={t.id}
-                    onClick={() => setTheme(t.id as "dark" | "light" | "system")}
+                    onClick={() => setTheme(t.id)}
                     className={cn(
                       "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px] font-medium transition-colors",
-                      theme === t.id
+                      themeReady && theme === t.id
                         ? "bg-primary/15 text-primary"
                         : "text-muted-foreground hover:text-foreground"
                     )}
@@ -152,7 +157,7 @@ export default function SettingsPage() {
             </SettingRow>
 
             <SettingRow label={lang === "id" ? "Status API" : "API Status"}>
-              <div className="flex items-center gap-1.5 text-[12px] text-emerald-400">
+              <div className="flex items-center gap-1.5 text-[12px] text-emerald-700 dark:text-emerald-400">
                 <Check className="h-3.5 w-3.5" />
                 <span>{lang === "id" ? "Tersambung" : "Connected"}</span>
               </div>
@@ -188,7 +193,7 @@ export default function SettingsPage() {
                       </div>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
+                  <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 dark:text-emerald-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                     Active
                   </span>
@@ -268,7 +273,7 @@ export default function SettingsPage() {
                       {lang === "id" ? "Kembalikan ke pengaturan default." : "Restore to default settings."}
                     </div>
                   </div>
-                  <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+                  <AlertTriangle className="h-4 w-4 text-rose-700 dark:text-rose-400 shrink-0" />
                 </div>
               </button>
 
@@ -291,7 +296,7 @@ export default function SettingsPage() {
                       {lang === "id" ? "Tutup sesi PolarisBI." : "End your PolarisBI session."}
                     </div>
                   </div>
-                  <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+                  <AlertTriangle className="h-4 w-4 text-rose-700 dark:text-rose-400 shrink-0" />
                 </div>
               </button>
             </div>
@@ -328,7 +333,7 @@ function Section({
         <h2
           className={cn(
             "text-[14px] font-semibold",
-            danger ? "text-rose-400" : "text-foreground"
+            danger ? "text-rose-700 dark:text-rose-400" : "text-foreground"
           )}
         >
           {title}

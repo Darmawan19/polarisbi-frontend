@@ -55,9 +55,9 @@ export function Sidebar() {
   const profileActive = pathname === "/profile";
 
   return (
-    <aside className="w-[240px] border-r border-border bg-sidebar flex flex-col h-screen shrink-0">
+    <aside className="w-[240px] bg-sidebar flex flex-col h-screen shrink-0">
       {/* Workspace switcher top */}
-      <div className="h-[60px] flex items-center px-3 border-b border-border">
+      <div className="on-header bg-sidebar-head h-[60px] flex items-center px-3 border-b border-border dark:border-r">
         <button
           className={cn(
             "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md",
@@ -82,15 +82,15 @@ export function Sidebar() {
               {t("workspaceTagline")}
             </div>
           </div>
-          <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-muted-foreground shrink-0" />
+          <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground dark:text-muted-foreground/60 group-hover:text-muted-foreground shrink-0" />
         </button>
       </div>
 
       {/* Nav sections */}
-      <nav className="flex-1 px-2 py-3 space-y-5 overflow-y-auto">
+      <nav className="flex-1 px-2 py-3 space-y-5 overflow-y-auto border-r border-border">
         {sections.map((section) => (
           <div key={section.label}>
-            <div className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+            <div className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground/60">
               {section.label}
             </div>
             <div className="space-y-0.5">
@@ -116,7 +116,7 @@ export function Sidebar() {
                       </kbd>
                     )}
                     {"badge" in item && item.badge && (
-                      <span className="text-[10px] text-muted-foreground/70 tabular-nums">
+                      <span className="text-[10px] text-muted-foreground dark:text-muted-foreground/70 tabular-nums">
                         {item.badge}
                       </span>
                     )}
@@ -129,7 +129,7 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom: user + settings */}
-      <div className="border-t border-border p-2 space-y-0.5">
+      <div className="border-t border-r border-border p-2 space-y-0.5">
         <Link
           href="/settings"
           className={cn(
@@ -151,7 +151,7 @@ export function Sidebar() {
               : "hover:bg-sidebar-accent/60 cursor-pointer"
           )}
         >
-          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center text-[10px] font-semibold text-[#0a0a0c] shrink-0">
+          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-signal-info-fg to-signal-up-fg flex items-center justify-center text-[10px] font-semibold text-primary-foreground shrink-0">
             D
           </div>
           <div className="flex-1 min-w-0">

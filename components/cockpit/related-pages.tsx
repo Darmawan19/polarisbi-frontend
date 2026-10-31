@@ -28,7 +28,7 @@ export function RelatedPages({ links }: RelatedPagesProps) {
             className="relative border border-border/40 rounded-lg p-4 hover:border-cyan-500/30 hover:bg-cyan-500/[0.02] transition block"
           >
             <div className="flex items-center gap-2">
-              <link.icon className="h-4 w-4 text-cyan-500 shrink-0" />
+              <link.icon className="h-4 w-4 text-cyan-700 dark:text-cyan-500 shrink-0" />
               <span className="text-sm font-medium text-foreground">{link.label}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-1.5">{link.description}</p>

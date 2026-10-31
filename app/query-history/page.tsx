@@ -94,11 +94,11 @@ function SortableRow({ finding, onToggleSelected, onRemove, isLast }: SortableRo
           style={
             finding.selected
               ? { background: "rgb(6 182 212 / 0.2)", borderColor: "rgb(6 182 212 / 0.6)" }
-              : { borderColor: "hsl(var(--border))" }
+              : { borderColor: "var(--border)" }
           }
           aria-label={finding.selected ? "Remove from report" : "Add to report"}
         >
-          {finding.selected && <Check className="h-2.5 w-2.5 text-cyan-400" />}
+          {finding.selected && <Check className="h-2.5 w-2.5 text-cyan-700 dark:text-cyan-400" />}
         </button>
       </td>
 
@@ -126,7 +126,7 @@ function SortableRow({ finding, onToggleSelected, onRemove, isLast }: SortableRo
       <td className="px-1.5 py-2.5 w-8">
         <button
           onClick={onRemove}
-          className="flex items-center justify-center text-muted-foreground/30 hover:text-[#f43f5e] transition-colors"
+          className="flex items-center justify-center text-muted-foreground/30 hover:text-signal-down-fg transition-colors"
           aria-label="Remove finding"
         >
           <X className="h-3.5 w-3.5" />
@@ -209,7 +209,7 @@ export default function QueryHistoryPage() {
           <div className="h-4 w-px bg-border/60" />
           <button
             onClick={() => clear()}
-            className="h-7 px-2.5 rounded-md text-[11px] text-muted-foreground hover:text-[#f43f5e] hover:bg-muted/40 transition-colors"
+            className="h-7 px-2.5 rounded-md text-[11px] text-muted-foreground hover:text-signal-down-fg hover:bg-muted/40 transition-colors"
           >
             {lang === "id" ? "Hapus semua" : "Clear all"}
           </button>

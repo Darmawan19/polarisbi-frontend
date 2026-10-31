@@ -67,7 +67,7 @@ function CopyButton({
       onClick={handleCopy}
       className="flex items-center gap-1.5 px-2 py-1 rounded text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
     >
-      {copied ? <Check className="h-3 w-3 text-[#10b981]" /> : <Copy className="h-3 w-3" />}
+      {copied ? <Check className="h-3 w-3 text-signal-up-fg" /> : <Copy className="h-3 w-3" />}
       {copied ? labelCopied : labelCopy}
     </button>
   );
@@ -114,7 +114,7 @@ export function AskResultBody({
         <TabButton active={tab === "results"} onClick={() => setTab("results")}>
           {t("askResultTabResults")}
           {state.rows.length > 0 && (
-            <span className="ml-1.5 text-[10px] font-numeric text-muted-foreground/60">
+            <span className="ml-1.5 text-[10px] font-numeric text-muted-foreground dark:text-muted-foreground/60">
               {state.rows.length}
             </span>
           )}
@@ -130,9 +130,9 @@ export function AskResultBody({
         {tab === "insight" && (
           <div className="p-5">
             {isError && (
-              <div className="rounded-lg border border-[#f43f5e]/30 bg-[#f43f5e]/8 p-4 flex items-start gap-3 mb-4">
-                <AlertCircle className="h-4 w-4 text-[#f43f5e] shrink-0 mt-0.5" />
-                <p className="text-[13px] text-[#f43f5e]">{state.error}</p>
+              <div className="rounded-lg border border-signal-down/30 bg-signal-down/8 p-4 flex items-start gap-3 mb-4">
+                <AlertCircle className="h-4 w-4 text-signal-down-fg shrink-0 mt-0.5" />
+                <p className="text-[13px] text-signal-down-fg">{state.error}</p>
               </div>
             )}
             {isLoading && !state.insight && (
@@ -261,7 +261,7 @@ export function AskResultBody({
       {/* Add to report pill — shown when done and finding exists */}
       {state.stage === "done" && finding && (
         <div className="flex items-center justify-between px-5 py-3 border-t border-border shrink-0">
-          <span className="text-[11px] font-numeric text-muted-foreground/60">
+          <span className="text-[11px] font-numeric text-muted-foreground dark:text-muted-foreground/60">
             {state.rows.length > 0
               ? t("askResultRowsReturned", { n: state.rows.length })
               : t("askResultNoDataYet")}
@@ -271,7 +271,7 @@ export function AskResultBody({
             className={cn(
               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border transition-colors",
               finding.selected
-                ? "bg-cyan-500/15 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/25"
+                ? "bg-cyan-500/15 text-cyan-700 dark:text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/25"
                 : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/40"
             )}
           >
@@ -294,10 +294,10 @@ export function AskResult({ state, onClose }: AskResultProps) {
 
   const isError = state.stage === "error";
   const statusDotColor = isError
-    ? "bg-[#f43f5e]"
+    ? "bg-signal-down"
     : state.stage === "done"
-    ? "bg-[#10b981]"
-    : "bg-[#00d4ff] animate-pulse";
+    ? "bg-signal-up"
+    : "bg-signal-info animate-pulse";
 
   const stageLabelMap: Record<AskState["stage"], string> = {
     idle: t("askResultStatusIdle"),
@@ -325,11 +325,11 @@ export function AskResult({ state, onClose }: AskResultProps) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-numeric text-muted-foreground/60 uppercase tracking-wider">
+              <span className="text-[11px] font-numeric text-muted-foreground dark:text-muted-foreground/60 uppercase tracking-wider">
                 {t("askResultQueryLabel")} #001
               </span>
               <div className={cn("h-1.5 w-1.5 rounded-full", statusDotColor)} />
-              <span className="text-[11px] text-muted-foreground/80">
+              <span className="text-[11px] text-muted-foreground dark:text-muted-foreground/80">
                 {stageLabelMap[state.stage]}
               </span>
             </div>

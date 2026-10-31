@@ -138,7 +138,7 @@ export default function DataSchemaPage() {
                         </code>
                       </td>
                       <td className="px-4 py-2.5">
-                        <code className="text-[11px] font-mono text-primary/80 bg-primary/5 px-1.5 py-0.5 rounded border border-primary/10">
+                        <code className="text-[11px] font-mono text-primary dark:text-primary/80 bg-primary/5 px-1.5 py-0.5 rounded border border-primary/10">
                           {col.type}
                         </code>
                       </td>
@@ -149,7 +149,7 @@ export default function DataSchemaPage() {
                         {col.nullable ? (
                           <span className="text-[11px] text-muted-foreground">YES</span>
                         ) : (
-                          <span className="text-[11px] text-rose-400 font-semibold">NO</span>
+                          <span className="text-[11px] text-rose-700 dark:text-rose-400 font-semibold">NO</span>
                         )}
                       </td>
                       <td className="px-4 py-2.5 text-center">

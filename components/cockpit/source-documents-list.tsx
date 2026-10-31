@@ -28,10 +28,10 @@ const TYPE_ICONS = {
 };
 
 const TYPE_COLORS = {
-  pdf: "text-rose-400",
-  xlsx: "text-emerald-400",
-  csv: "text-sky-400",
-  image: "text-amber-400",
+  pdf: "text-rose-700 dark:text-rose-400",
+  xlsx: "text-emerald-700 dark:text-emerald-400",
+  csv: "text-sky-700 dark:text-sky-400",
+  image: "text-amber-800 dark:text-amber-400",
 };
 
 export function SourceDocumentsList({ documents }: SourceDocumentsListProps) {
@@ -165,9 +165,9 @@ export function SourceDocumentsList({ documents }: SourceDocumentsListProps) {
                       className={cn(
                         "inline-flex px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider",
                         doc.status === "indexed" &&
-                          "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+                          "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20",
                         doc.status === "processing" &&
-                          "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+                          "bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-500/20",
                         doc.status === "archived" &&
                           "bg-muted/40 text-muted-foreground border border-border/40"
                       )}

@@ -51,7 +51,7 @@ export default function ProfilePage() {
           {/* Profile card */}
           <div className="rounded-lg border border-border/40 bg-card/30 p-6">
             <div className="flex items-start gap-5">
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#10b981] flex items-center justify-center text-[28px] font-semibold text-[#0a0a0c] shrink-0">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-signal-info-fg to-signal-up-fg flex items-center justify-center text-[28px] font-semibold text-primary-foreground shrink-0">
                 D
               </div>
               <div className="flex-1">

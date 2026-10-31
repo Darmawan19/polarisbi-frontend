@@ -287,7 +287,7 @@ export default function KPIGlossaryPage() {
                   </div>
 
                   <div className="pt-2 border-t border-border/30">
-                    <div className="text-primary/80 uppercase tracking-wider mb-1 text-[10px]">
+                    <div className="text-primary dark:text-primary/80 uppercase tracking-wider mb-1 text-[10px]">
                       {lang === "id" ? "Konteks BRI Life" : "BRI Life Context"}
                     </div>
                     <div className="text-foreground/90 leading-relaxed">

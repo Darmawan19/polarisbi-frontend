@@ -79,7 +79,7 @@ export function ChatInput({
       >
         <ArrowUp className="h-3.5 w-3.5" />
       </button>
-      <div className="px-4 pb-2 text-[11px] text-muted-foreground/60">
+      <div className="px-4 pb-2 text-[11px] text-muted-foreground dark:text-muted-foreground/60">
         ⌘+Enter to submit
       </div>
     </div>

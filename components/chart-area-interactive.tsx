@@ -21,11 +21,12 @@ const data = [
 ];
 
 const companies = [
-  { name: "BRI Life", color: "#00d4ff", isHighlight: true },
-  { name: "Prudential", color: "#a855f7", isHighlight: false },
-  { name: "Allianz", color: "#f59e0b", isHighlight: false },
-  { name: "Manulife", color: "#10b981", isHighlight: false },
-  { name: "AIA", color: "#f43f5e", isHighlight: false },
+  // Theme-aware colors (defined in globals.css) so lines stay readable in day mode
+  { name: "BRI Life", color: "var(--signal-info)", isHighlight: true },
+  { name: "Prudential", color: "var(--signal-violet)", isHighlight: false },
+  { name: "Allianz", color: "var(--signal-warn)", isHighlight: false },
+  { name: "Manulife", color: "var(--signal-up)", isHighlight: false },
+  { name: "AIA", color: "var(--signal-down)", isHighlight: false },
 ];
 
 interface CustomTooltipProps {
@@ -97,22 +98,22 @@ export function ChartAreaInteractive() {
             <defs>
               {companies.map((c) => (
                 <linearGradient key={c.name} id={`grad-${c.name.replace(/\s/g, "")}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={c.color} stopOpacity={c.isHighlight ? 0.4 : 0.15} />
+                  <stop offset="0%" stopColor={c.color} style={{ stopOpacity: c.isHighlight ? "var(--area-top)" : "var(--area-top-soft)" }} />
                   <stop offset="100%" stopColor={c.color} stopOpacity={0} />
                 </linearGradient>
               ))}
             </defs>
-            <CartesianGrid strokeDasharray="0" stroke="#1f1f25" vertical={false} />
+            <CartesianGrid strokeDasharray="0" stroke="var(--chart-grid)" vertical={false} />
             <XAxis
               dataKey="quarter"
-              stroke="#71717a"
+              stroke="var(--muted-foreground)"
               fontSize={11}
               tickLine={false}
               axisLine={false}
               tick={{ fontFamily: "var(--font-jetbrains-mono)" }}
             />
             <YAxis
-              stroke="#71717a"
+              stroke="var(--muted-foreground)"
               fontSize={11}
               tickLine={false}
               axisLine={false}
@@ -122,7 +123,7 @@ export function ChartAreaInteractive() {
             />
             <Tooltip
               content={<CustomTooltip />}
-              cursor={{ stroke: "#27272a", strokeWidth: 1, strokeDasharray: "4 4" }}
+              cursor={{ stroke: "var(--border)", strokeWidth: 1, strokeDasharray: "4 4" }}
             />
             {companies.map((c) => (
               <Area
@@ -134,7 +135,7 @@ export function ChartAreaInteractive() {
                 fill={`url(#grad-${c.name.replace(/\s/g, "")})`}
                 opacity={activeCompany === null ? 1 : activeCompany === c.name ? 1 : 0.25}
                 dot={c.isHighlight ? { r: 3, fill: c.color, strokeWidth: 0 } : false}
-                activeDot={{ r: 4, fill: c.color, strokeWidth: 2, stroke: "#0a0a0c" }}
+                activeDot={{ r: 4, fill: c.color, strokeWidth: 2, stroke: "var(--background)" }}
               />
             ))}
           </AreaChart>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles, Calendar } from "lucide-react";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { GenerateReport } from "@/components/cockpit/generate-report";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
@@ -43,7 +44,8 @@ export function Header() {
   };
 
   return (
-    <header className="h-[60px] border-b border-border bg-background flex items-center justify-between px-6 shrink-0">
+    // on-header: blue (Nusantara) bar in day mode, unchanged in night mode
+    <header className="on-header h-[60px] border-b border-border bg-header flex items-center justify-between px-6 shrink-0">
       <div className="flex items-center gap-4">
         {/* Section context */}
         <div className="flex items-center gap-2">
@@ -80,7 +82,7 @@ export function Header() {
         >
           <Sparkles className="h-3 w-3" />
           <span>{t("headerAskPlaceholder")}</span>
-          <kbd className="ml-6 px-1.5 py-0.5 rounded text-[10px] bg-muted/60 border border-border font-mono">
+          <kbd className="ml-6 px-1.5 py-0.5 rounded text-[10px] bg-transparent dark:bg-muted/60 border border-border font-mono">
             {isMac ? "⌘K" : "Ctrl+K"}
           </kbd>
         </button>
@@ -95,6 +97,7 @@ export function Header() {
             {time}
           </div>
           <LanguageSwitcher />
+          <ThemeToggle />
         </div>
       </div>
     </header>

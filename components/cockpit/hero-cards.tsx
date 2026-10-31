@@ -25,14 +25,14 @@ interface HeroCard {
 function ProgressBar({ segments }: { segments: ProgressSegment[] }) {
   const max = Math.max(...segments.map((s) => s.max));
   const colorClass: Record<string, string> = {
-    blue: "bg-[#00d4ff]",
-    purple: "bg-[#10b981]",
-    pink: "bg-[#10b981]",
-    grey: "bg-[#2a2a32]",
+    blue: "bg-signal-info",
+    purple: "bg-signal-up",
+    pink: "bg-signal-up",
+    grey: "bg-signal-neutral",
   };
 
   return (
-    <div className="h-1 rounded-full bg-muted/40 overflow-hidden flex">
+    <div className="h-1 rounded-full bg-track dark:bg-muted/40 overflow-hidden flex">
       {segments.map((seg, i) => (
         <div
           key={i}
@@ -106,8 +106,8 @@ export function HeroCards() {
             <span
               className={cn(
                 "text-[11px] font-medium px-1.5 py-0.5 rounded tabular-nums",
-                card.deltaType === "positive" && "text-[#10b981]",
-                card.deltaType === "negative" && "text-[#f43f5e]",
+                card.deltaType === "positive" && "text-signal-up-fg",
+                card.deltaType === "negative" && "text-signal-down-fg",
                 card.deltaType === "neutral" && "text-muted-foreground"
               )}
             >

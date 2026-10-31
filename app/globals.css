@@ -36,6 +36,22 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-head: var(--sidebar-head);
+  --color-header: var(--header);
+  /* Status / signal colors — readable on both light and dark surfaces */
+  --color-signal-info: var(--signal-info);
+  --color-signal-up: var(--signal-up);
+  --color-signal-down: var(--signal-down);
+  --color-signal-warn: var(--signal-warn);
+  --color-signal-violet: var(--signal-violet);
+  --color-signal-neutral: var(--signal-neutral);
+  /* Text-safe versions of the signal colors (darker in day mode so small text stays readable) */
+  --color-signal-info-fg: var(--signal-info-fg);
+  --color-signal-up-fg: var(--signal-up-fg);
+  --color-signal-down-fg: var(--signal-down-fg);
+  --color-signal-warn-fg: var(--signal-warn-fg);
+  --color-signal-violet-fg: var(--signal-violet-fg);
+  --color-track: var(--track);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -44,44 +60,84 @@
   --font-mono: var(--font-jetbrains-mono);
 }
 
-/* Analytical instrument panel palette — Bloomberg-grade dark + electric blue */
+/* ------------------------------------------------------------------ */
+/* DAY MODE (default CSS values) — white surfaces, Nusantara-blue header,
+   in the style of the BRI Life website.
+   To change the brand blue, edit --brand-blue below (one place).      */
+/* ------------------------------------------------------------------ */
 :root {
-  --background: #0a0a0c;
-  --foreground: #fafafa;
-  --card: #111114;
-  --card-foreground: #fafafa;
-  --popover: #15151a;
-  --popover-foreground: #fafafa;
-  --primary: #00d4ff;
-  --primary-foreground: #0a0a0c;
-  --secondary: #1a1a20;
-  --secondary-foreground: #fafafa;
-  --muted: #15151a;
-  --muted-foreground: #71717a;
-  --accent: #10b981;
-  --accent-foreground: #0a0a0c;
-  --destructive: #f43f5e;
-  --destructive-foreground: #fafafa;
-  --border: #1f1f25;
-  --input: #1f1f25;
-  --ring: #00d4ff;
-  --chart-1: #00d4ff;
-  --chart-2: #10b981;
-  --chart-3: #f43f5e;
+  color-scheme: light;
+
+  --brand-blue: #00529c;
+
+  --background: #f3f7fc;
+  --foreground: #0b1a2e;
+  --card: #ffffff;
+  --card-foreground: #0b1a2e;
+  --popover: #ffffff;
+  --popover-foreground: #0b1a2e;
+  --primary: var(--brand-blue);
+  --primary-foreground: #ffffff;
+  --secondary: #e8eef6;
+  --secondary-foreground: #0b1a2e;
+  --muted: #e8eef6;
+  --muted-foreground: #435569;
+  --accent: #dfeaf7;
+  --accent-foreground: var(--brand-blue);
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #c3d1e2;
+  --input: #c3d1e2;
+  --ring: var(--brand-blue);
+  --chart-1: var(--brand-blue);
+  --chart-2: #0d9f6e;
+  --chart-3: #ef4444;
   --chart-4: #f59e0b;
-  --chart-5: #a855f7;
+  --chart-5: #8b5cf6;
   --radius: 0.5rem;
-  --sidebar: #0d0d10;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #00d4ff;
-  --sidebar-primary-foreground: #0a0a0c;
-  --sidebar-accent: #1a1a20;
-  --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #1f1f25;
-  --sidebar-ring: #00d4ff;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0b1a2e;
+  --sidebar-primary: var(--brand-blue);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e0ecf9;
+  --sidebar-accent-foreground: var(--brand-blue);
+  --sidebar-border: #c3d1e2;
+  --sidebar-ring: var(--brand-blue);
+  --sidebar-head: var(--brand-blue);
+
+  --header: var(--brand-blue);
+
+  /* Graphic colors (lines, bars, dots, tints) — vivid. */
+  --signal-info: #0f6fd6;
+  --signal-up: #0d9f6e;
+  --signal-down: #ef4444;
+  --signal-warn: #f59e0b;
+  --signal-violet: #8b5cf6;
+  --signal-neutral: #94a3b8;
+  /* Text colors — darker so small labels pass contrast on white */
+  --signal-info-fg: var(--brand-blue);
+  --signal-up-fg: #046f4f;
+  --signal-down-fg: #c42020;
+  --signal-warn-fg: #a14a07;
+  --signal-violet-fg: #7c3aed;
+  /* Soft track behind progress bars, and chart gridlines */
+  --track: #e1e9f3;
+  --chart-grid: #e1e9f3;
+  /* Area-chart fill strength (lighter in day mode so overlapping areas don't turn muddy) */
+  --area-top: 0.22;
+  --area-top-soft: 0.05;
+
+  --grid-line: transparent;
+  --glow: rgba(0, 82, 156, 0.05);
+  --scrollbar-thumb: #b6c3d3;
+  --scrollbar-thumb-hover: #8696ab;
 }
 
+/* NIGHT MODE — Bloomberg-grade dark + electric blue (unchanged) */
 .dark {
+  color-scheme: dark;
+
   --background: #0a0a0c;
   --foreground: #fafafa;
   --card: #111114;
@@ -114,18 +170,80 @@
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: #1f1f25;
   --sidebar-ring: #00d4ff;
+  --sidebar-head: #0d0d10;
+
+  --header: #0a0a0c;
+
+  --signal-info: #00d4ff;
+  --signal-up: #10b981;
+  --signal-down: #f43f5e;
+  --signal-warn: #f59e0b;
+  --signal-violet: #a855f7;
+  --signal-neutral: #2a2a32;
+  --signal-info-fg: var(--signal-info);
+  --signal-up-fg: var(--signal-up);
+  --signal-down-fg: var(--signal-down);
+  --signal-warn-fg: var(--signal-warn);
+  --signal-violet-fg: var(--signal-violet);
+  --track: #15151a;
+  --chart-grid: var(--border);
+  --area-top: 0.4;
+  --area-top-soft: 0.15;
+
+  --grid-line: rgba(255, 255, 255, 0.015);
+  --glow: rgba(0, 212, 255, 0.05);
+  --scrollbar-thumb: #1f1f25;
+  --scrollbar-thumb-hover: #2a2a30;
+}
+
+/* ------------------------------------------------------------------ */
+/* `.on-header` marks a surface that is blue in day mode (top header,
+   page headers, sidebar logo row). Inside it the theme tokens are
+   re-mapped to white-on-blue, so every existing component (text,
+   borders, buttons, language switcher …) adapts without edits.
+   Night mode is untouched — the selector only applies when not .dark. */
+/* ------------------------------------------------------------------ */
+html:not(.dark) .on-header {
+  --foreground: #ffffff;
+  --card-foreground: #ffffff;
+  --muted-foreground: #eaf2fb;
+  --border: rgba(255, 255, 255, 0.22);
+  --input: rgba(255, 255, 255, 0.22);
+  --background: rgba(255, 255, 255, 0.12);
+  --card: rgba(255, 255, 255, 0.12);
+  --muted: rgba(255, 255, 255, 0.22);
+  --accent: rgba(255, 255, 255, 0.22);
+  --accent-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: var(--brand-blue);
+  --ring: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.16);
+  --signal-down: #fecaca;
+  --signal-down-fg: #fecaca;
+  color: var(--foreground);
+}
+
+/* Day mode: white cards lift off the soft-blue page with a light shadow.
+   (in @layer components so any explicit shadow-* utility still wins) */
+@layer components {
+  html:not(.dark) .bg-card {
+    box-shadow: 0 1px 2px rgba(11, 26, 46, 0.06), 0 1px 3px rgba(11, 26, 46, 0.05);
+  }
+  html:not(.dark) .on-header .bg-card {
+    box-shadow: none;
+  }
 }
 
 @layer utilities {
   .bg-grid {
     background-image:
-      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .bg-radial-glow {
-    background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(0, 212, 255, 0.05), transparent 70%);
+    background: radial-gradient(ellipse 800px 400px at 50% 0%, var(--glow), transparent 70%);
   }
 
   .font-numeric {
@@ -178,9 +296,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f1f25;
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a2a30;
+  background: var(--scrollbar-thumb-hover);
 }

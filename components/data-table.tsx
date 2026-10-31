@@ -31,21 +31,21 @@ const rows: CompanyRow[] = [
 ];
 
 const channelColors: Record<string, string> = {
-  Agency: "text-[#00d4ff] bg-[#00d4ff]/10 border-[#00d4ff]/20",
-  Bancassurance: "text-[#10b981] bg-[#10b981]/10 border-[#10b981]/20",
-  "Multi-channel": "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/20",
-  Digital: "text-[#a855f7] bg-[#a855f7]/10 border-[#a855f7]/20",
+  Agency: "text-signal-info-fg bg-signal-info/10 border-signal-info/20",
+  Bancassurance: "text-signal-up-fg bg-signal-up/10 border-signal-up/20",
+  "Multi-channel": "text-signal-warn-fg bg-signal-warn/10 border-signal-warn/20",
+  Digital: "text-signal-violet-fg bg-signal-violet/10 border-signal-violet/20",
 };
 
 function RBCIndicator({ value }: { value: number }) {
   const color =
     value >= 400
-      ? "text-[#10b981] bg-[#10b981]/10 border-[#10b981]/20"
+      ? "text-signal-up-fg bg-signal-up/10 border-signal-up/20"
       : value >= 300
-      ? "text-[#00d4ff] bg-[#00d4ff]/10 border-[#00d4ff]/20"
+      ? "text-signal-info-fg bg-signal-info/10 border-signal-info/20"
       : value >= 200
-      ? "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/20"
-      : "text-[#f43f5e] bg-[#f43f5e]/10 border-[#f43f5e]/20";
+      ? "text-signal-warn-fg bg-signal-warn/10 border-signal-warn/20"
+      : "text-signal-down-fg bg-signal-down/10 border-signal-down/20";
   return (
     <span className={cn("inline-flex px-2 py-0.5 rounded text-[11px] font-medium font-numeric border", color)}>
       {value}%
@@ -165,7 +165,7 @@ export function DataTable() {
           <span className="ml-2 text-[11px] text-muted-foreground">{t("tableSubtitle")}</span>
         </div>
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground dark:text-muted-foreground/60" />
           <input
             type="text"
             placeholder={t("tableFilterPlaceholder")}
@@ -266,7 +266,7 @@ export function DataTable() {
                   )}
                 >
                   <td className="px-4 py-3">
-                    <span className="text-[12px] font-numeric text-muted-foreground/60">{row.rank}</span>
+                    <span className="text-[12px] font-numeric text-muted-foreground dark:text-muted-foreground/60">{row.rank}</span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -275,7 +275,7 @@ export function DataTable() {
                         <div className={cn("text-[13px]", isBRI ? "font-semibold text-foreground" : "text-foreground")}>
                           {row.company}
                         </div>
-                        <div className="text-[11px] font-numeric text-muted-foreground/60">{row.ticker}</div>
+                        <div className="text-[11px] font-numeric text-muted-foreground dark:text-muted-foreground/60">{row.ticker}</div>
                       </div>
                     </div>
                   </td>
@@ -291,11 +291,11 @@ export function DataTable() {
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       {row.growth >= 0 ? (
-                        <TrendingUp className="h-3 w-3 text-[#10b981]" />
+                        <TrendingUp className="h-3 w-3 text-signal-up-fg" />
                       ) : (
-                        <TrendingDown className="h-3 w-3 text-[#f43f5e]" />
+                        <TrendingDown className="h-3 w-3 text-signal-down-fg" />
                       )}
-                      <span className={cn("text-[13px] font-numeric", row.growth >= 0 ? "text-[#10b981]" : "text-[#f43f5e]")}>
+                      <span className={cn("text-[13px] font-numeric", row.growth >= 0 ? "text-signal-up-fg" : "text-signal-down-fg")}>
                         {row.growth >= 0 ? "+" : ""}{row.growth.toFixed(1)}%
                       </span>
                     </div>
@@ -313,7 +313,7 @@ export function DataTable() {
       </div>
 
       <div className="px-4 py-2.5 border-t border-border/60">
-        <span className="text-[11px] text-muted-foreground/60">
+        <span className="text-[11px] text-muted-foreground dark:text-muted-foreground/60">
           {t("tableShowingOf", { n: filtered.length, total: rows.length })}
         </span>
       </div>

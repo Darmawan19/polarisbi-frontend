@@ -47,7 +47,11 @@ function Sparkline({
   const linePath = `M ${pathPoints.join(" L ")}`;
   const areaPath = `${linePath} L ${width - padding},${height} L ${padding},${height} Z`;
 
-  const color = { positive: "#10b981", negative: "#f43f5e", neutral: "#00d4ff" }[deltaType];
+  const color = {
+    positive: "var(--signal-up)",
+    negative: "var(--signal-down)",
+    neutral: "var(--signal-info)",
+  }[deltaType];
   const gradientId = `grad-${Math.random().toString(36).slice(2, 9)}`;
 
   return (
@@ -85,8 +89,8 @@ function Sparkline({
 function DeltaBadge({ delta, type }: { delta: string; type: "positive" | "negative" | "neutral" }) {
   const Icon = type === "positive" ? TrendingUp : type === "negative" ? TrendingDown : Minus;
   const color = {
-    positive: "text-[#10b981] bg-[#10b981]/10",
-    negative: "text-[#f43f5e] bg-[#f43f5e]/10",
+    positive: "text-signal-up-fg bg-signal-up/10",
+    negative: "text-signal-down-fg bg-signal-down/10",
     neutral: "text-muted-foreground bg-muted/40",
   }[type];
   return (
@@ -199,7 +203,7 @@ export function SectionCards() {
             </div>
             <DeltaBadge delta={kpi.delta} type={kpi.deltaType} />
           </div>
-          <div className="text-[10px] text-muted-foreground/60 mb-3">{kpi.unit}</div>
+          <div className="text-[10px] text-muted-foreground dark:text-muted-foreground/60 mb-3">{kpi.unit}</div>
           <div className="text-[24px] font-semibold font-numeric tracking-tight text-foreground leading-none mb-3">
             {kpi.value}
           </div>

@@ -13,7 +13,7 @@ export function LanguageSwitcher() {
         className={cn(
           "h-5 px-2 text-[10px] font-semibold tracking-wide rounded transition-all",
           lang === "en"
-            ? "bg-primary/15 text-primary"
+            ? "bg-black/25 dark:bg-primary/15 text-primary"
             : "text-muted-foreground hover:text-foreground"
         )}
       >
@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
         className={cn(
           "h-5 px-2 text-[10px] font-semibold tracking-wide rounded transition-all",
           lang === "id"
-            ? "bg-primary/15 text-primary"
+            ? "bg-black/25 dark:bg-primary/15 text-primary"
             : "text-muted-foreground hover:text-foreground"
         )}
       >
