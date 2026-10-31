@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
 
 interface KPIDefinition {
   id: string;
@@ -174,7 +173,7 @@ export function SectionCards() {
       await Promise.all(
         kpis.map(async (kpi) => {
           try {
-            const res = await fetch(`${API_URL}/api/sparkline/${kpi.sparklineKey}`);
+            const res = await apiFetch(`/api/sparkline/${kpi.sparklineKey}`);
             if (res.ok) {
               const data = await res.json();
               results[kpi.id] = data.points || [];

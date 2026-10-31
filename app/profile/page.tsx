@@ -2,7 +2,6 @@
 
 import {
   User,
-  Mail,
   Briefcase,
   Calendar,
   Activity,
@@ -16,6 +15,8 @@ import {
 import { PageHeader } from "@/components/cockpit/page-header";
 import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
+import { useAuth, ROLE_LABEL_KEY } from "@/lib/auth/auth-context";
+import { ChangePasswordForm } from "@/components/auth/change-password-form";
 import type { LucideIcon } from "lucide-react";
 
 const ACTIVITY_LOG: { id: number; action: string; target: string; time: string; icon: LucideIcon }[] = [
@@ -30,7 +31,11 @@ const ACTIVITY_LOG: { id: number; action: string; target: string; time: string; 
 ];
 
 export default function ProfilePage() {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
+  const { user, logout } = useAuth();
+  const displayName = user?.display_name ?? "—";
+  const initial = (displayName.trim()[0] ?? "?").toUpperCase();
+  const roleLabel = user ? t(ROLE_LABEL_KEY[user.role]) : "—";
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -52,17 +57,17 @@ export default function ProfilePage() {
           <div className="rounded-lg border border-border/40 bg-card/30 p-6">
             <div className="flex items-start gap-5">
               <div className="h-20 w-20 rounded-full bg-gradient-to-br from-signal-info-fg to-signal-up-fg flex items-center justify-center text-[28px] font-semibold text-primary-foreground shrink-0">
-                D
+                {initial}
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-semibold text-foreground">Darmawan</h2>
-                <p className="text-[13px] text-muted-foreground">Lidharmawan Suryaatmadja</p>
+                <h2 className="text-xl font-semibold text-foreground">{displayName}</h2>
+                <p className="text-[13px] text-muted-foreground">@{user?.username ?? "—"}</p>
                 <div className="grid grid-cols-2 gap-3 mt-4 max-w-md">
-                  <InfoItem icon={Mail} label="Email" value="darmawan@polarisbi.io" />
+                  <InfoItem icon={User} label="Username" value={user?.username ?? "—"} />
                   <InfoItem
                     icon={Briefcase}
                     label={lang === "id" ? "Peran" : "Role"}
-                    value="Insurance Analyst"
+                    value={roleLabel}
                   />
                   <InfoItem
                     icon={Calendar}
@@ -72,19 +77,35 @@ export default function ProfilePage() {
                   <InfoItem icon={Activity} label="Workspace" value="PolarisBI" />
                 </div>
               </div>
-              <button
-                onClick={() =>
-                  alert(
-                    lang === "id"
-                      ? "Coming soon: edit profil"
-                      : "Coming soon: edit profile"
-                  )
-                }
-                className="px-3 py-1.5 text-[12px] rounded-md border border-border/60 text-foreground hover:bg-card/60 transition-colors"
-              >
-                {lang === "id" ? "Edit Profil" : "Edit Profile"}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    alert(
+                      lang === "id"
+                        ? "Coming soon: edit profil"
+                        : "Coming soon: edit profile"
+                    )
+                  }
+                  className="px-3 py-1.5 text-[12px] rounded-md border border-border/60 text-foreground hover:bg-card/60 transition-colors"
+                >
+                  {lang === "id" ? "Edit Profil" : "Edit Profile"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => logout()}
+                  className="px-3 py-1.5 text-[12px] rounded-md border border-border/60 text-foreground hover:bg-card/60 transition-colors"
+                >
+                  {t("logout")}
+                </button>
+              </div>
             </div>
+          </div>
+
+          {/* Ganti password */}
+          <div className="rounded-lg border border-border/40 bg-card/30 p-6">
+            <h3 className="text-[14px] font-semibold text-foreground">{t("changePwTitle")}</h3>
+            <p className="text-[12px] text-muted-foreground mt-1 mb-5">{t("changePwSubtitle")}</p>
+            <ChangePasswordForm className="space-y-4 max-w-sm" />
           </div>
 
           {/* Usage stats */}

@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n/context";
+import { AuthProvider } from "@/lib/auth/auth-context";
+import { AuthGate } from "@/components/auth/auth-gate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,7 +47,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <I18nProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <AuthProvider>
+              <TooltipProvider>
+                <AuthGate>{children}</AuthGate>
+              </TooltipProvider>
+            </AuthProvider>
             <Toaster />
           </I18nProvider>
         </ThemeProvider>

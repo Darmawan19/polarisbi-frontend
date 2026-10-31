@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useFindingsStore } from "@/lib/stores/findings";
+import { apiFetch } from "@/lib/api";
 
 export type AskStage =
   | "idle"
@@ -35,8 +36,6 @@ const INITIAL: AskState = {
   findingId: undefined,
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
 export function useAskStream() {
   const [state, setState] = useState<AskState>(INITIAL);
   const abortRef = useRef<AbortController | null>(null);
@@ -56,7 +55,7 @@ export function useAskStream() {
     let localInsight = "";
 
     try {
-      const res = await fetch(`${API_URL}/api/ask/stream`, {
+      const res = await apiFetch("/api/ask/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question, language }),

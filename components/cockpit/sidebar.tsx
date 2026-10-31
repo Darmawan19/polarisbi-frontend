@@ -12,13 +12,19 @@ import {
   Settings,
   ChevronsUpDown,
   Home,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
+import { useAuth, ROLE_LABEL_KEY } from "@/lib/auth/auth-context";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { t } = useI18n();
+  const { user, logout } = useAuth();
+  const displayName = user?.display_name ?? "—";
+  const initial = (displayName.trim()[0] ?? "?").toUpperCase();
+  const roleLabel = user ? t(ROLE_LABEL_KEY[user.role]) : "";
 
   const sections = [
     {
@@ -142,23 +148,34 @@ export function Sidebar() {
           <Settings className={cn("h-3.5 w-3.5", settingsActive && "text-primary")} />
           <span>{t("navSettings")}</span>
         </Link>
-        <Link
-          href="/profile"
-          className={cn(
-            "flex items-center gap-2 px-2 py-2 rounded-md transition-colors",
-            profileActive
-              ? "bg-sidebar-accent"
-              : "hover:bg-sidebar-accent/60 cursor-pointer"
-          )}
-        >
-          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-signal-info-fg to-signal-up-fg flex items-center justify-center text-[10px] font-semibold text-primary-foreground shrink-0">
-            D
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[12px] font-medium text-foreground truncate">Darmawan</div>
-            <div className="text-[10px] text-muted-foreground truncate">{t("navAnalystRole")}</div>
-          </div>
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/profile"
+            className={cn(
+              "flex flex-1 min-w-0 items-center gap-2 px-2 py-2 rounded-md transition-colors",
+              profileActive
+                ? "bg-sidebar-accent"
+                : "hover:bg-sidebar-accent/60 cursor-pointer"
+            )}
+          >
+            <div className="h-6 w-6 rounded-full bg-gradient-to-br from-signal-info-fg to-signal-up-fg flex items-center justify-center text-[10px] font-semibold text-primary-foreground shrink-0">
+              {initial}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[12px] font-medium text-foreground truncate">{displayName}</div>
+              <div className="text-[10px] text-muted-foreground truncate">{roleLabel}</div>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={() => logout()}
+            aria-label={t("logout")}
+            title={t("logout")}
+            className="h-8 w-8 shrink-0 flex items-center justify-center rounded-md text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground transition-colors"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
     </aside>
   );

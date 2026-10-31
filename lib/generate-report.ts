@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import { apiFetch } from "@/lib/api";
 
 export interface ReportFinding {
   question: string;
@@ -12,8 +12,8 @@ export async function fetchReport(
   title = "Insurance Data Briefing"
 ): Promise<{ blob: Blob; filename: string }> {
   const hasFindings = findings && findings.length > 0;
-  const res = await fetch(
-    `${API_URL}/api/report?kind=${kind}&fmt=${fmt}`,
+  const res = await apiFetch(
+    `/api/report?kind=${kind}&fmt=${fmt}`,
     hasFindings
       ? {
           method: "POST",
