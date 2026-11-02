@@ -286,8 +286,8 @@ export const dictionary = {
   "insight.brief.generated": { id: "Brief berhasil dibuat.", en: "Brief generated." },
   "insight.brief.notGeneratedTitle": { id: "Brief belum dibuat", en: "No brief yet" },
   "insight.brief.notGeneratedBody": {
-    id: "Ringkasan AI untuk periode ini belum tersedia. Brief biasanya dibuat otomatis secara terjadwal.",
-    en: "The AI summary for this period is not available yet. Briefs are usually generated on a schedule.",
+    id: "Ringkasan AI untuk periode ini belum dibuat. Analis atau admin dapat membuatnya secara manual lewat tombol Buat brief.",
+    en: "The AI summary for this period has not been generated yet. An analyst or admin can create it manually with the Generate brief button.",
   },
   "insight.brief.notGeneratedAsk": {
     id: "Minta analis atau admin untuk membuatnya.",
@@ -315,8 +315,8 @@ export const dictionary = {
   "insight.impact.expand": { id: "Tampilkan rincian produk {province}", en: "Show product details for {province}" },
   "insight.impact.noProducts": { id: "Tidak ada rincian produk.", en: "No product breakdown." },
   "insight.impact.empty": {
-    id: "Belum ada kejadian berlokasi provinsi pada periode ini.",
-    en: "No province-level events in this period yet.",
+    id: "Belum ada data dampak untuk periode ini. Data dampak muncul setelah brief dibuat dan ada kejadian yang terdeteksi di provinsi.",
+    en: "No impact data for this period yet. It appears once a brief is generated and province-level events are detected.",
   },
   "insight.impact.error": { id: "Data dampak tidak dapat dimuat.", en: "Impact data could not be loaded." },
   "insight.impact.caption": {
