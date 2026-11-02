@@ -13,6 +13,7 @@ import {
   ChevronsUpDown,
   Home,
   LogOut,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
@@ -32,6 +33,7 @@ export function Sidebar() {
       items: [
         { label: t("navIndustryPulse"), icon: Home, href: "/" },
         { label: t("navAskAI"), icon: Sparkles, href: "/ask-ai", shortcut: "⌘K" },
+        { label: t("insight.nav"), icon: Newspaper, href: "/insight" },
         { label: t("navQueryHistory"), icon: Clock, href: "/query-history" },
       ],
     },

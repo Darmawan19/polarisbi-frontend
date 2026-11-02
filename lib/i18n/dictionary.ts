@@ -211,6 +211,177 @@ export const dictionary = {
   pwReason_too_common: { id: "Password terlalu umum, pilih yang lain.", en: "That password is too common. Pick another." },
   pwReason_contains_username: { id: "Password tidak boleh memuat username.", en: "Password must not contain your username." },
   pwReason_same_as_old: { id: "Password baru harus berbeda dari yang lama.", en: "The new password must differ from the old one." },
+
+  // Insight: terminal informasi (brief AI, dampak BRI Life, feed berita)
+  "insight.nav": { id: "Insight", en: "Insight" },
+  "insight.title": { id: "Insight", en: "Insight" },
+  "insight.description": {
+    id: "Brief AI harian, mingguan, dan bulanan beserta berita yang memengaruhi bisnis asuransi.",
+    en: "Daily, weekly, and monthly AI briefs plus news that affects the insurance business.",
+  },
+  "insight.periodTabsLabel": { id: "Periode brief", en: "Brief period" },
+  "insight.period.daily": { id: "Harian", en: "Daily" },
+  "insight.period.weekly": { id: "Mingguan", en: "Weekly" },
+  "insight.period.monthly": { id: "Bulanan", en: "Monthly" },
+  "insight.demo": { id: "Demo", en: "Demo" },
+  "insight.demoTitle": {
+    id: "Bagian ini memakai data contoh, bukan data riil.",
+    en: "This section uses sample data, not real data.",
+  },
+  "insight.mockModeTitle": {
+    id: "Mode contoh aktif: seluruh data di halaman ini adalah data contoh lokal.",
+    en: "Sample mode is on: all data on this page is local sample data.",
+  },
+
+  // Strip status sumber
+  "insight.sources.title": { id: "Sumber data", en: "Data sources" },
+  "insight.sources.lastUpdated": { id: "Pembaruan terakhir", en: "Last updated" },
+  "insight.sources.never": { id: "Belum pernah", en: "Never" },
+  "insight.sources.status.ok": { id: "Normal", en: "OK" },
+  "insight.sources.status.stale": { id: "Tertunda", en: "Stale" },
+  "insight.sources.status.error": { id: "Gagal", en: "Error" },
+  "insight.sources.status.disabled": { id: "Nonaktif", en: "Disabled" },
+  "insight.sources.lastSuccess": { id: "Sukses terakhir: {time}", en: "Last success: {time}" },
+  "insight.sources.lastAttempt": { id: "Percobaan terakhir: {time}", en: "Last attempt: {time}" },
+  "insight.sources.itemCount": { id: "Item terakhir: {n}", en: "Last items: {n}" },
+  "insight.sources.lastError": { id: "Error terakhir: {error}", en: "Last error: {error}" },
+  "insight.sources.empty": { id: "Belum ada sumber data yang terdaftar.", en: "No data sources registered yet." },
+  "insight.sources.error": { id: "Status sumber tidak dapat dimuat.", en: "Source status could not be loaded." },
+  "insight.refreshNow": { id: "Perbarui sekarang", en: "Refresh now" },
+  "insight.refreshing": { id: "Memperbarui…", en: "Refreshing…" },
+  "insight.refreshRunning": {
+    id: "Sumber data sedang diperbarui. Hasilnya akan muncul sebentar lagi.",
+    en: "Sources are already being refreshed. Results will appear shortly.",
+  },
+  "insight.refreshDone": {
+    id: "Pembaruan selesai: {n} item baru.",
+    en: "Refresh finished: {n} new items.",
+  },
+  "insight.refreshFailedSources": { id: "Sumber gagal: {sources}", en: "Failed sources: {sources}" },
+  "insight.refreshError": { id: "Pembaruan sumber gagal.", en: "Source refresh failed." },
+
+  // Kartu brief
+  "insight.brief.label": { id: "Ringkasan AI", en: "AI Summary" },
+  "insight.brief.generatedAt": { id: "Dibuat {time}", en: "Generated {time}" },
+  "insight.brief.periodRange": { id: "Periode {start} – {end}", en: "Period {start} – {end}" },
+  "insight.brief.template": { id: "Ringkasan templat", en: "Template summary" },
+  "insight.brief.templateTitle": {
+    id: "Model AI tidak tersedia saat brief dibuat, jadi isi disusun dari templat.",
+    en: "The AI model was unavailable when this brief was made, so it was built from a template.",
+  },
+  "insight.brief.stale": { id: "Ada kejadian baru sejak brief dibuat", en: "New events since this brief was made" },
+  "insight.brief.executiveSummary": { id: "Ringkasan eksekutif", en: "Executive summary" },
+  "insight.brief.keyEvents": { id: "Kejadian penting", en: "Key events" },
+  "insight.brief.impactNote": { id: "Catatan dampak", en: "Impact note" },
+  "insight.brief.watchlist": { id: "Perlu dipantau", en: "Watchlist" },
+  "insight.brief.sourceChipTitle": { id: "Buka sumber: {title}", en: "Open source: {title}" },
+  "insight.brief.generate": { id: "Buat brief", en: "Generate brief" },
+  "insight.brief.regenerate": { id: "Buat ulang", en: "Regenerate" },
+  "insight.brief.generating": { id: "Membuat brief…", en: "Generating brief…" },
+  "insight.brief.cooldown": { id: "Tunggu {time}", en: "Wait {time}" },
+  "insight.brief.cooldownMsg": {
+    id: "Brief baru saja dibuat. Coba lagi setelah hitung mundur selesai.",
+    en: "A brief was made recently. Try again when the countdown ends.",
+  },
+  "insight.brief.generated": { id: "Brief berhasil dibuat.", en: "Brief generated." },
+  "insight.brief.notGeneratedTitle": { id: "Brief belum dibuat", en: "No brief yet" },
+  "insight.brief.notGeneratedBody": {
+    id: "Ringkasan AI untuk periode ini belum tersedia. Brief biasanya dibuat otomatis secara terjadwal.",
+    en: "The AI summary for this period is not available yet. Briefs are usually generated on a schedule.",
+  },
+  "insight.brief.notGeneratedAsk": {
+    id: "Minta analis atau admin untuk membuatnya.",
+    en: "Ask an analyst or admin to generate it.",
+  },
+  "insight.brief.noContent": {
+    id: "Brief tersedia tetapi isinya kosong.",
+    en: "The brief exists but has no content.",
+  },
+  "insight.brief.error": { id: "Brief tidak dapat dimuat.", en: "The brief could not be loaded." },
+  "insight.brief.invalidPeriod": { id: "Periode tidak valid.", en: "Invalid period." },
+
+  // Panel dampak
+  "insight.impact.title": { id: "Dampak untuk BRI Life", en: "Impact on BRI Life" },
+  "insight.impact.demoNote": {
+    id: "Angka polis pada panel ini adalah data contoh, bukan data portofolio BRI Life yang sebenarnya.",
+    en: "Policy figures in this panel are sample data, not BRI Life's actual portfolio.",
+  },
+  "insight.impact.colProvince": { id: "Provinsi", en: "Province" },
+  "insight.impact.colEvents": { id: "Kejadian", en: "Events" },
+  "insight.impact.colMaxScore": { id: "Skor tertinggi", en: "Top score" },
+  "insight.impact.colPolicies": { id: "Polis terpapar", en: "Exposed policies" },
+  "insight.impact.colProduct": { id: "Produk", en: "Product" },
+  "insight.impact.colActivePolicies": { id: "Polis aktif", en: "Active policies" },
+  "insight.impact.expand": { id: "Tampilkan rincian produk {province}", en: "Show product details for {province}" },
+  "insight.impact.noProducts": { id: "Tidak ada rincian produk.", en: "No product breakdown." },
+  "insight.impact.empty": {
+    id: "Belum ada kejadian berlokasi provinsi pada periode ini.",
+    en: "No province-level events in this period yet.",
+  },
+  "insight.impact.error": { id: "Data dampak tidak dapat dimuat.", en: "Impact data could not be loaded." },
+  "insight.impact.caption": {
+    id: "Kejadian per provinsi dan jumlah polis aktif yang terpapar",
+    en: "Events per province and number of exposed active policies",
+  },
+
+  // Feed
+  "insight.feed.title": { id: "Berita & kejadian", en: "News & events" },
+  "insight.feed.regionLabel": { id: "Feed berita asuransi", en: "Insurance news feed" },
+  "insight.feed.filterCategory": { id: "Kategori", en: "Category" },
+  "insight.feed.filterProvince": { id: "Provinsi", en: "Province" },
+  "insight.feed.filterMinScore": { id: "Skor minimum", en: "Minimum score" },
+  "insight.feed.all": { id: "Semua", en: "All" },
+  "insight.feed.anyScore": { id: "Semua skor", en: "Any score" },
+  "insight.feed.resetFilters": { id: "Atur ulang filter", en: "Reset filters" },
+  "insight.feed.showing": { id: "Menampilkan {n} dari {total}", en: "Showing {n} of {total}" },
+  "insight.feed.loadMore": { id: "Muat lebih banyak", en: "Load more" },
+  "insight.feed.loadingMore": { id: "Memuat…", en: "Loading…" },
+  "insight.feed.loadMoreError": { id: "Gagal memuat item berikutnya.", en: "Could not load more items." },
+  "insight.feed.empty": { id: "Belum ada berita untuk filter ini.", en: "No news for these filters yet." },
+  "insight.feed.emptyHint": {
+    id: "Coba longgarkan filter atau tunggu pembaruan sumber berikutnya.",
+    en: "Try loosening the filters or wait for the next source refresh.",
+  },
+  "insight.feed.error": { id: "Feed berita tidak dapat dimuat.", en: "The news feed could not be loaded." },
+  "insight.feed.unverified": { id: "Belum terverifikasi", en: "Unverified" },
+  "insight.feed.unverifiedTitle": {
+    id: "Tingkat keparahan belum diverifikasi oleh sumber resmi.",
+    en: "Severity has not been verified by an official source.",
+  },
+  "insight.feed.score": { id: "Skor {n}", en: "Score {n}" },
+  "insight.feed.noProvince": { id: "Nasional / tanpa provinsi", en: "National / no province" },
+  "insight.feed.opensNewTab": { id: "(membuka tab baru)", en: "(opens in new tab)" },
+  "insight.feed.autoRefresh": { id: "Diperbarui otomatis tiap 5 menit", en: "Auto-refreshes every 5 minutes" },
+
+  // Kategori
+  "insight.category.bencana_alam": { id: "Bencana alam", en: "Natural disaster" },
+  "insight.category.kesehatan_wabah": { id: "Kesehatan & wabah", en: "Health & outbreak" },
+  "insight.category.ekonomi_makro": { id: "Ekonomi makro", en: "Macroeconomy" },
+  "insight.category.regulasi": { id: "Regulasi", en: "Regulation" },
+  "insight.category.industri_asuransi": { id: "Industri asuransi", en: "Insurance industry" },
+  "insight.category.lainnya": { id: "Lainnya", en: "Other" },
+
+  // Keparahan
+  "insight.severity.label": { id: "Keparahan", en: "Severity" },
+  "insight.severity.rendah": { id: "Rendah", en: "Low" },
+  "insight.severity.sedang": { id: "Sedang", en: "Medium" },
+  "insight.severity.tinggi": { id: "Tinggi", en: "High" },
+  "insight.severity.sangat_tinggi": { id: "Sangat tinggi", en: "Very high" },
+
+  // Footer & umum
+  "insight.footer.title": { id: "Atribusi sumber", en: "Source attribution" },
+  "insight.footer.empty": { id: "Atribusi akan tampil setelah data sumber dimuat.", en: "Attribution appears once source data loads." },
+  "insight.footer.timezone": { id: "Semua waktu dalam WIB (Asia/Jakarta).", en: "All times in WIB (Asia/Jakarta)." },
+  "insight.retry": { id: "Coba lagi", en: "Try again" },
+  "insight.err.network": {
+    id: "Tidak dapat terhubung ke server. Periksa koneksi lalu coba lagi.",
+    en: "Cannot reach the server. Check your connection and try again.",
+  },
+  "insight.err.forbidden": {
+    id: "Peran Anda tidak memiliki akses untuk tindakan ini.",
+    en: "Your role does not have access to this action.",
+  },
+  "insight.err.generic": { id: "Terjadi kesalahan. Silakan coba lagi.", en: "Something went wrong. Please try again." },
 } as const;
 
 export type DictKey = keyof typeof dictionary;
