@@ -83,7 +83,7 @@ export function FeedList({ feed }: { feed: FeedResource }) {
 
   if (feed.loading && feed.items.length === 0) {
     return (
-      <div className="space-y-2" aria-hidden="true">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2" aria-hidden="true">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="rounded-md border border-border px-3 py-2.5">
             <SectionSkeleton lines={3} />
@@ -107,9 +107,9 @@ export function FeedList({ feed }: { feed: FeedResource }) {
 
   return (
     <div className="space-y-2">
-      <ul className="space-y-2">
+      <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
         {feed.items.map((it) => (
-          <li key={it.id}>
+          <li key={it.id} className="min-w-0">
             <FeedCard item={it} now={now} />
           </li>
         ))}

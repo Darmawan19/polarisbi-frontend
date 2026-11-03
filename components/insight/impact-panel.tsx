@@ -41,7 +41,8 @@ export function ImpactPanel({ digest }: { digest: Resource<DigestResponse> }) {
           <SectionEmpty title={t("insight.impact.empty")} icon={<MapPin className="h-5 w-5" />} />
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        // Scroll horizontal saja untuk layar sempit; `relative` agar caption sr-only tetap terpotong di sini
+        <div className="relative overflow-x-auto">
           <table className="w-full text-[12px]">
             <caption className="sr-only">{t("insight.impact.caption")}</caption>
             <thead>

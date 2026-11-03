@@ -332,7 +332,6 @@ export const dictionary = {
   // Feed
   "insight.feed.title": { id: "Berita & kejadian", en: "News & events" },
   "insight.feed.regionLabel": { id: "Feed berita asuransi", en: "Insurance news feed" },
-  "insight.columnBriefLabel": { id: "Brief dan dampak untuk BRI Life", en: "Brief and impact on BRI Life" },
   "insight.feed.filterCategory": { id: "Kategori", en: "Category" },
   "insight.feed.filterProvince": { id: "Provinsi", en: "Province" },
   "insight.feed.filterMinScore": { id: "Skor minimum", en: "Minimum score" },
