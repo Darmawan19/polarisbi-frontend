@@ -142,13 +142,17 @@ function InsightView() {
 
           <SourceStatusStrip sources={sources} isAdmin={isAdmin} onRefreshed={onRefreshed} />
 
-          {/* Brief (lebih lebar) + Dampak berdampingan mulai lg, bertumpuk di bawahnya */}
-          <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <div className="min-w-0">
+          {/* Brief (lebih lebar) + Dampak berdampingan mulai lg, bertumpuk di bawahnya.
+              lg: tinggi baris = tinggi Brief (min 20rem). Kartu Dampak absolute inset-0 di
+              selnya, jadi tidak ikut menentukan tinggi baris; isinya scroll di dalam kartu.
+              < lg: kartu Dampak setinggi 28rem dengan scroll internal yang sama. */}
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:grid-rows-[minmax(20rem,auto)]">
+            {/* Kartu Brief ikut mengisi baris bila lebih pendek dari tinggi minimum */}
+            <div className="min-w-0 flex flex-col [&>*]:flex-1">
               <BriefCard key={period} period={period} digest={digest} canGenerate={canGenerate} />
             </div>
-            <div className="min-w-0">
-              <ImpactPanel digest={digest} />
+            <div className="relative min-w-0 h-[28rem] lg:h-auto">
+              <ImpactPanel digest={digest} className="h-full lg:absolute lg:inset-0" />
             </div>
           </div>
 

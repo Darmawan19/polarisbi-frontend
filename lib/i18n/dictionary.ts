@@ -307,6 +307,7 @@ export const dictionary = {
 
   // Panel dampak
   "insight.impact.title": { id: "Dampak untuk BRI Life", en: "Impact on BRI Life" },
+  "insight.impact.regionLabel": { id: "Tabel dampak per provinsi", en: "Impact by province table" },
   "insight.impact.demoNote": {
     id: "Angka polis pada panel ini adalah data contoh, bukan data portofolio BRI Life yang sebenarnya.",
     en: "Policy figures in this panel are sample data, not BRI Life's actual portfolio.",

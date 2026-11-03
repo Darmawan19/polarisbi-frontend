@@ -10,7 +10,7 @@ import type { Resource } from "@/hooks/use-insight";
 import { SectionCard, SectionEmpty, SectionError, SectionSkeleton, useErrorMessage } from "./section-state";
 import { cn } from "@/lib/utils";
 
-export function ImpactPanel({ digest }: { digest: Resource<DigestResponse> }) {
+export function ImpactPanel({ digest, className }: { digest: Resource<DigestResponse>; className?: string }) {
   const { t, lang } = useI18n();
   const errMsg = useErrorMessage();
   const [open, setOpen] = useState<Record<string, boolean>>({});
@@ -28,35 +28,42 @@ export function ImpactPanel({ digest }: { digest: Resource<DigestResponse> }) {
       titleAddon={isDemo ? <DemoBadge title={t("insight.impact.demoNote")} /> : undefined}
       meta={isDemo ? t("insight.impact.demoNote") : undefined}
       busy={digest.loading}
-      bodyClassName="px-0 py-0"
+      className={cn("flex flex-col", className)}
+      bodyClassName="flex min-h-0 flex-1 flex-col px-0 py-0"
     >
-      {digest.loading && !d ? (
-        <SectionSkeleton lines={5} className="px-4 py-3" />
-      ) : digest.error && !d ? (
-        <div className="px-4 py-3">
-          <SectionError message={errMsg(digest.error, "insight.impact.error")} onRetry={digest.reload} />
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="px-4 py-3">
-          <SectionEmpty title={t("insight.impact.empty")} icon={<MapPin className="h-5 w-5" />} />
-        </div>
-      ) : (
-        // Scroll horizontal saja untuk layar sempit; `relative` agar caption sr-only tetap terpotong di sini
-        <div className="relative overflow-x-auto">
+      {/* Satu-satunya scroll di kartu ini: header tabel menempel (sticky), badan tabel scroll.
+          `relative` agar caption sr-only terpotong di sini, tidak bocor ke wadah halaman. */}
+      <div
+        role="region"
+        aria-label={t("insight.impact.regionLabel")}
+        tabIndex={0}
+        className="relative min-h-0 flex-1 overflow-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+      >
+        {digest.loading && !d ? (
+          <SectionSkeleton lines={5} className="px-4 py-3" />
+        ) : digest.error && !d ? (
+          <div className="px-4 py-3">
+            <SectionError message={errMsg(digest.error, "insight.impact.error")} onRetry={digest.reload} />
+          </div>
+        ) : rows.length === 0 ? (
+          <div className="px-4 py-3">
+            <SectionEmpty title={t("insight.impact.empty")} icon={<MapPin className="h-5 w-5" />} />
+          </div>
+        ) : (
           <table className="w-full text-[12px]">
             <caption className="sr-only">{t("insight.impact.caption")}</caption>
             <thead>
               <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
-                <th scope="col" className="px-4 py-2 text-left font-semibold">
+                <th scope="col" className="px-4 py-2 text-left font-semibold sticky top-0 z-10 bg-card shadow-[inset_0_-1px_0_var(--border)]">
                   {t("insight.impact.colProvince")}
                 </th>
-                <th scope="col" className="px-3 py-2 text-right font-semibold">
+                <th scope="col" className="px-3 py-2 text-right font-semibold sticky top-0 z-10 bg-card shadow-[inset_0_-1px_0_var(--border)]">
                   {t("insight.impact.colEvents")}
                 </th>
-                <th scope="col" className="px-3 py-2 text-right font-semibold">
+                <th scope="col" className="px-3 py-2 text-right font-semibold sticky top-0 z-10 bg-card shadow-[inset_0_-1px_0_var(--border)]">
                   {t("insight.impact.colMaxScore")}
                 </th>
-                <th scope="col" className="px-4 py-2 text-right font-semibold">
+                <th scope="col" className="px-4 py-2 text-right font-semibold sticky top-0 z-10 bg-card shadow-[inset_0_-1px_0_var(--border)]">
                   {t("insight.impact.colPolicies")}
                 </th>
               </tr>
@@ -124,13 +131,13 @@ export function ImpactPanel({ digest }: { digest: Resource<DigestResponse> }) {
               })}
             </tbody>
           </table>
-        </div>
-      )}
-      {digest.error && d && (
-        <div className="px-4 py-3">
-          <SectionError message={errMsg(digest.error, "insight.impact.error")} onRetry={digest.reload} />
-        </div>
-      )}
+        )}
+        {digest.error && d && (
+          <div className="px-4 py-3">
+            <SectionError message={errMsg(digest.error, "insight.impact.error")} onRetry={digest.reload} />
+          </div>
+        )}
+      </div>
     </SectionCard>
   );
 }
