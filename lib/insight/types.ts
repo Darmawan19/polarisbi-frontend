@@ -9,8 +9,10 @@ export type InsightCategory =
   | "bencana_alam"
   | "kesehatan_wabah"
   | "ekonomi_makro"
+  | "pasar_keuangan"
   | "regulasi"
   | "industri_asuransi"
+  | "perbankan_bri"
   | "lainnya";
 
 export type SeverityLabel = "rendah" | "sedang" | "tinggi" | "sangat_tinggi";
@@ -24,9 +26,25 @@ export const INSIGHT_CATEGORIES: readonly InsightCategory[] = [
   "bencana_alam",
   "kesehatan_wabah",
   "ekonomi_makro",
+  "pasar_keuangan",
   "regulasi",
   "industri_asuransi",
+  "perbankan_bri",
   "lainnya",
+];
+
+/**
+ * Tujuh aspek yang dipantau di Radar aspek dashboard (urutan tampil).
+ * `lainnya` sengaja tidak termasuk.
+ */
+export const INSIGHT_ASPECTS: readonly InsightCategory[] = [
+  "bencana_alam",
+  "kesehatan_wabah",
+  "ekonomi_makro",
+  "pasar_keuangan",
+  "regulasi",
+  "industri_asuransi",
+  "perbankan_bri",
 ];
 
 export const SEVERITY_LABELS: readonly SeverityLabel[] = ["rendah", "sedang", "tinggi", "sangat_tinggi"];
@@ -71,6 +89,8 @@ export type DigestStatus = "ready" | "fallback" | "not_generated";
 export interface DigestKeyEvent {
   text: string;
   item_ids: string[];
+  /** Opsional (backend baru): kategori per poin. */
+  category?: InsightCategory;
 }
 
 export interface DigestContent {

@@ -9,6 +9,7 @@ import { SectionCards } from "@/components/section-cards";
 import { CommandPalette } from "@/components/cockpit/command-palette";
 import { AskResult } from "@/components/cockpit/ask-result";
 import { useAskStream } from "@/hooks/use-ask-stream";
+import { LiveInsight } from "@/components/insight/dashboard/live-insight";
 
 export default function Home() {
   const { state, ask, reset } = useAskStream();
@@ -29,6 +30,20 @@ export default function Home() {
       <div className="absolute inset-0 bg-grid pointer-events-none" />
       <div className="absolute inset-x-0 top-0 h-[400px] bg-radial-glow pointer-events-none" />
       <div className="relative flex flex-col gap-8 p-8 max-w-[1600px] mx-auto">
+        {/* Blok Insight langsung (data 24 jam, memuat datanya sendiri; gagal tidak memengaruhi KPI) */}
+        <LiveInsight />
+
+        {/* Pemisah: semua bagian di bawah ini adalah data historis FY, isinya tidak berubah */}
+        <header className="-mb-4 flex flex-wrap items-end justify-between gap-2 border-t border-border pt-6 dark:[--muted-foreground:color-mix(in_oklab,var(--foreground)_66%,var(--card))]">
+          <div>
+            <h2 className="text-[22px] font-semibold tracking-tight text-foreground">{t("dash.historical.title")}</h2>
+            <p className="text-[13px] text-muted-foreground mt-0.5">{t("dash.historical.subtitle")}</p>
+          </div>
+          <span className="inline-flex items-center rounded border border-border bg-muted px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-foreground/85">
+            {t("dash.historical.badge")}
+          </span>
+        </header>
+
         {/* Section 1: Hero KPI cards (Supabase-style) */}
         <section>
           <div className="flex items-center justify-between mb-4">

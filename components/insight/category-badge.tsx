@@ -1,6 +1,16 @@
 "use client";
 
-import { Mountain, HeartPulse, TrendingUp, Scale, ShieldCheck, Tag, type LucideIcon } from "lucide-react";
+import {
+  Mountain,
+  HeartPulse,
+  TrendingUp,
+  ChartCandlestick,
+  Scale,
+  ShieldCheck,
+  Landmark,
+  Tag,
+  type LucideIcon,
+} from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import type { InsightCategory } from "@/lib/insight/types";
 import { cn } from "@/lib/utils";
@@ -9,8 +19,10 @@ export const CATEGORY_ICON: Record<InsightCategory, LucideIcon> = {
   bencana_alam: Mountain,
   kesehatan_wabah: HeartPulse,
   ekonomi_makro: TrendingUp,
+  pasar_keuangan: ChartCandlestick,
   regulasi: Scale,
   industri_asuransi: ShieldCheck,
+  perbankan_bri: Landmark,
   lainnya: Tag,
 };
 

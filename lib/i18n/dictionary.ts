@@ -364,7 +364,9 @@ export const dictionary = {
   "insight.category.kesehatan_wabah": { id: "Kesehatan & wabah", en: "Health & outbreak" },
   "insight.category.ekonomi_makro": { id: "Ekonomi makro", en: "Macroeconomy" },
   "insight.category.regulasi": { id: "Regulasi", en: "Regulation" },
+  "insight.category.pasar_keuangan": { id: "Pasar keuangan", en: "Financial markets" },
   "insight.category.industri_asuransi": { id: "Industri asuransi", en: "Insurance industry" },
+  "insight.category.perbankan_bri": { id: "Perbankan & BRI", en: "Banking & BRI" },
   "insight.category.lainnya": { id: "Lainnya", en: "Other" },
 
   // Keparahan
@@ -388,6 +390,83 @@ export const dictionary = {
     en: "Your role does not have access to this action.",
   },
   "insight.err.generic": { id: "Terjadi kesalahan. Silakan coba lagi.", en: "Something went wrong. Please try again." },
+
+  // Dashboard: blok Insight langsung
+  "dash.live.title": { id: "Insight langsung", en: "Live insight" },
+  "dash.live.badge": { id: "Langsung", en: "Live" },
+  "dash.live.window": { id: "24 jam terakhir", en: "Last 24 hours" },
+  "dash.live.updated": { id: "Diperbarui {time}", en: "Updated {time}" },
+  "dash.live.updatedNever": { id: "Belum ada pembaruan sumber", en: "No source update yet" },
+  "dash.live.periodLabel": { id: "Periode brief", en: "Brief period" },
+  "dash.live.mockTitle": {
+    id: "Mode contoh aktif: data Insight di blok ini adalah data contoh lokal.",
+    en: "Sample mode is on: Insight data in this block is local sample data.",
+  },
+  "dash.live.boundary": {
+    id: "Blok Insight langsung gagal ditampilkan. Data dashboard lainnya tidak terpengaruh.",
+    en: "The live insight block failed to render. The rest of the dashboard is unaffected.",
+  },
+  "dash.health.label": { id: "Kesehatan sumber data", en: "Data source health" },
+  "dash.health.ok": { id: "Sumber normal", en: "Sources healthy" },
+  "dash.health.okTooltip": { id: "Semua sumber data aktif berjalan normal.", en: "All active data sources are healthy." },
+  "dash.health.warn": { id: "{n} sumber tertunda", en: "{n} sources delayed" },
+  "dash.health.error": { id: "{n} sumber bermasalah", en: "{n} sources failing" },
+  "dash.health.loading": { id: "Memeriksa sumber…", en: "Checking sources…" },
+  "dash.health.unknown": { id: "Status sumber tidak tersedia", en: "Source status unavailable" },
+  "dash.health.tooltipTitle": { id: "Sumber bermasalah", en: "Sources with issues" },
+
+  "dash.brief.title": { id: "Brief Direksi", en: "Executive Brief" },
+  "dash.brief.subtitle": { id: "Ringkasan AI", en: "AI summary" },
+  "dash.brief.readMore": { id: "Baca selengkapnya", en: "Read more" },
+  "dash.brief.readMoreLabel": {
+    id: "Baca brief {period} selengkapnya di halaman Insight",
+    en: "Read the full {period} brief on the Insight page",
+  },
+  "dash.brief.fallback": { id: "Mode cadangan", en: "Fallback mode" },
+  "dash.brief.fallbackTitle": {
+    id: "Brief disusun dari templat karena ringkasan AI belum tersedia.",
+    en: "This brief was built from a template because the AI summary is not available.",
+  },
+  "dash.brief.generatedBy": { id: "Oleh {by}", en: "By {by}" },
+  "dash.brief.by.llm": { id: "AI", en: "AI" },
+  "dash.brief.by.template": { id: "templat", en: "template" },
+  "dash.brief.autoTitle": { id: "Brief sedang disiapkan", en: "Brief in preparation" },
+  "dash.brief.autoBody": {
+    id: "Brief dibuat otomatis oleh sistem secara berkala. Silakan periksa kembali sebentar lagi.",
+    en: "Briefs are generated automatically by the system on a schedule. Please check back shortly.",
+  },
+  "dash.brief.provinces": { id: "Provinsi terdampak", en: "Affected provinces" },
+  "dash.brief.provinceEvents": { id: "{province}: {n} kejadian", en: "{province}: {n} events" },
+  "dash.brief.impactLink": { id: "Lihat dampak untuk BRI Life", en: "See impact on BRI Life" },
+  "dash.brief.impactDemoNote": {
+    id: "Angka polis masih data contoh, sehingga hanya ditampilkan di halaman Insight dengan label Demo.",
+    en: "Policy figures are still sample data, so they are shown only on the Insight page with a Demo label.",
+  },
+
+  "dash.radar.title": { id: "Radar aspek", en: "Aspect radar" },
+  "dash.radar.subtitle": { id: "Kejadian 24 jam terakhir per aspek", en: "Events in the last 24 hours by aspect" },
+  "dash.radar.noEvents": { id: "Tidak ada kejadian", en: "No events" },
+  "dash.radar.count": { id: "{n} kejadian", en: "{n} events" },
+  "dash.radar.rowLabel": {
+    id: "{aspect}: {n} kejadian, keparahan tertinggi {severity}. Buka di Insight",
+    en: "{aspect}: {n} events, highest severity {severity}. Open in Insight",
+  },
+  "dash.radar.rowLabelEmpty": {
+    id: "{aspect}: tidak ada kejadian. Buka di Insight",
+    en: "{aspect}: no events. Open in Insight",
+  },
+  "dash.radar.truncated": {
+    id: "Dihitung dari {n} kejadian berskor tertinggi (dari {total}); jumlah bisa lebih rendah dari sebenarnya.",
+    en: "Counted from the top {n} scored events (of {total}); counts may be lower than actual.",
+  },
+  "dash.radar.error": { id: "Radar aspek tidak dapat dimuat.", en: "The aspect radar could not be loaded." },
+
+  "dash.historical.title": { id: "Industry Pulse", en: "Industry Pulse" },
+  "dash.historical.badge": { id: "Historis · TA 2024", en: "Historical · FY 2024" },
+  "dash.historical.subtitle": {
+    id: "Data periodik industri dan BRI Life, bukan data langsung.",
+    en: "Periodic industry and BRI Life data, not live data.",
+  },
 } as const;
 
 export type DictKey = keyof typeof dictionary;

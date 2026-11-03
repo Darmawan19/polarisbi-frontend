@@ -99,6 +99,76 @@ export function useSources(): Resource<SourceStatus[]> {
   return useResource("sources", (signal) => getSources(signal));
 }
 
+// ------------------------------------------------------------------ dashboard: feed 24 jam + auto refresh
+
+/** Batas `limit` terbesar yang diterima GET /api/insight/feed (backend: FEED_MAX_LIMIT). */
+export const FEED_MAX_LIMIT = 200;
+export const RECENT_WINDOW_MS = 24 * 60 * 60_000;
+
+export interface RecentFeed {
+  /** item yang terbit dalam 24 jam terakhir, urut skor tertinggi */
+  items: FeedItem[];
+  /** jumlah item yang cocok di server (bisa > items.length bila terpotong limit) */
+  total: number;
+  /** true bila server punya lebih banyak item daripada yang diterima */
+  truncated: boolean;
+  fetchedAt: string;
+}
+
+/**
+ * Feed 24 jam terakhir dengan limit terbesar yang didukung API. Dipakai bersama oleh
+ * pita headline dan Radar aspek (satu permintaan). `since` dihitung saat fetch.
+ */
+export function useRecentFeed(): Resource<RecentFeed> {
+  return useResource("recent-feed:24h", async (signal) => {
+    const sinceMs = Date.now() - RECENT_WINDOW_MS;
+    const res = await getFeed(
+      { since: new Date(sinceMs).toISOString().replace(/\.\d{3}Z$/, "Z"), limit: FEED_MAX_LIMIT, offset: 0 },
+      signal
+    );
+    // saring ulang di klien (mode contoh mengabaikan `since`)
+    const items = res.items
+      .filter((i) => {
+        const ms = new Date(i.published_at).getTime();
+        return Number.isFinite(ms) && ms >= sinceMs;
+      })
+      .sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
+    return {
+      items,
+      total: res.total,
+      truncated: res.total > res.items.length,
+      fetchedAt: new Date().toISOString(),
+    };
+  });
+}
+
+/**
+ * Panggil `reloads` tiap 5 menit, hanya saat tab terlihat (pola sama dengan useFeed).
+ * Saat tab kembali terlihat dan jeda sudah lewat, langsung diperbarui.
+ */
+export function useAutoRefresh(reloads: readonly (() => void)[]) {
+  const reloadsRef = useRef(reloads);
+  useEffect(() => {
+    reloadsRef.current = reloads;
+  });
+
+  useEffect(() => {
+    let last = Date.now();
+    const tick = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - last < FEED_AUTO_REFRESH_MS - 1000) return;
+      last = Date.now();
+      reloadsRef.current.forEach((r) => r());
+    };
+    const id = window.setInterval(tick, 30_000);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, []);
+}
+
 // ------------------------------------------------------------------ feed (paging + auto refresh)
 
 export interface FeedFilters {

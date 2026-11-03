@@ -12,7 +12,7 @@ import { SectionCard, SectionEmpty, SectionError, SectionSkeleton, useErrorMessa
 import { PERIOD_PANEL_ID, periodTabId } from "./period-tabs";
 import { cn } from "@/lib/utils";
 
-function SourceChip({ item }: { item: FeedItem }) {
+export function SourceChip({ item }: { item: FeedItem }) {
   const { t } = useI18n();
   const href = safeExternalUrl(item.url);
   const label = (

@@ -121,10 +121,17 @@ function normalizeContent(v: unknown): DigestContent | null {
     executive_summary: str(v.executive_summary),
     key_events: arr(v.key_events)
       .filter(isObj)
-      .map((e) => ({
-        text: str(e.text),
-        item_ids: arr(e.item_ids).filter((x): x is string => typeof x === "string"),
-      }))
+      .map((e) => {
+        const ev: DigestContent["key_events"][number] = {
+          text: str(e.text),
+          item_ids: arr(e.item_ids).filter((x): x is string => typeof x === "string"),
+        };
+        // field opsional; slug yang belum dikenal jatuh ke "lainnya"
+        if (typeof e.category === "string" && e.category !== "") {
+          ev.category = oneOf<InsightCategory>(e.category, INSIGHT_CATEGORIES, "lainnya");
+        }
+        return ev;
+      })
       .filter((e) => e.text !== ""),
     impact_note: str(v.impact_note),
     watchlist: arr(v.watchlist).filter((x): x is string => typeof x === "string" && x.trim() !== ""),
@@ -160,7 +167,8 @@ export function normalizeDigest(raw: unknown, period: InsightPeriod): DigestResp
     is_stale: bool(o.is_stale, false),
     content: normalizeContent(o.content),
     impact: normalizeImpact(o.impact),
-    exposure_is_demo: bool(o.exposure_is_demo, false),
+    // Aman secara bawaan: bila field hilang/rusak, angka polis dianggap data contoh.
+    exposure_is_demo: bool(o.exposure_is_demo, true),
     items: normalizeItems(o.items),
     attributions: arr(o.attributions).filter((x): x is string => typeof x === "string"),
   };
