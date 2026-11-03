@@ -137,38 +137,43 @@ function InsightView() {
 
           <SourceStatusStrip sources={sources} isAdmin={isAdmin} onRefreshed={onRefreshed} />
 
-          <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          {/* lg: tinggi baris mengikuti kolom kiri (min 28rem); feed mengisi sel itu dan
+              daftarnya scroll di dalam. Dulu feed dibatasi 100vh-10rem, sehingga baris
+              setinggi viewport dan menyisakan ruang kosong di bawah kolom kiri. */}
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <div className="min-w-0 space-y-4">
               <BriefCard key={period} period={period} digest={digest} canGenerate={canGenerate} />
               <ImpactPanel digest={digest} />
             </div>
 
-            <section
-              aria-labelledby="insight-feed-title"
-              aria-busy={feed.loading || feed.loadingMore || undefined}
-              className="min-w-0 flex flex-col rounded-lg border border-border bg-card lg:sticky lg:top-0 lg:max-h-[calc(100vh-10rem)]"
-            >
-              <header className="space-y-2.5 border-b border-border px-4 py-3">
-                <div className="flex items-center justify-between gap-2">
-                  <h2 id="insight-feed-title" className="text-[13px] font-semibold tracking-tight text-foreground">
-                    {t("insight.feed.title")}
-                  </h2>
-                  <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-                    <RefreshCw className="h-3 w-3" aria-hidden="true" />
-                    {t("insight.feed.autoRefresh")}
-                  </span>
-                </div>
-                <FeedFilters value={filters} provinces={provinces} onChange={onFilters} />
-              </header>
-              <div
-                role="region"
-                aria-label={t("insight.feed.regionLabel")}
-                tabIndex={0}
-                className="min-h-0 flex-1 overflow-y-auto px-3 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+            <div className="relative min-w-0 lg:min-h-[28rem]">
+              <section
+                aria-labelledby="insight-feed-title"
+                aria-busy={feed.loading || feed.loadingMore || undefined}
+                className="flex flex-col rounded-lg border border-border bg-card lg:absolute lg:inset-0"
               >
-                <FeedList feed={feed} />
-              </div>
-            </section>
+                <header className="space-y-2.5 border-b border-border px-4 py-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 id="insight-feed-title" className="text-[13px] font-semibold tracking-tight text-foreground">
+                      {t("insight.feed.title")}
+                    </h2>
+                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <RefreshCw className="h-3 w-3" aria-hidden="true" />
+                      {t("insight.feed.autoRefresh")}
+                    </span>
+                  </div>
+                  <FeedFilters value={filters} provinces={provinces} onChange={onFilters} />
+                </header>
+                <div
+                  role="region"
+                  aria-label={t("insight.feed.regionLabel")}
+                  tabIndex={0}
+                  className="min-h-0 flex-1 overflow-y-auto px-3 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                >
+                  <FeedList feed={feed} />
+                </div>
+              </section>
+            </div>
           </div>
 
           <InsightFooter attributions={attributions} />
