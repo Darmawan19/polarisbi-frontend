@@ -461,6 +461,32 @@ export const dictionary = {
   },
   "dash.radar.error": { id: "Radar aspek tidak dapat dimuat.", en: "The aspect radar could not be loaded." },
 
+  "dash.ticker.label": { id: "Pita headline 24 jam terakhir", en: "Headline ticker, last 24 hours" },
+  "dash.ticker.heading": { id: "Headline", en: "Headlines" },
+  "dash.ticker.listLabel": { id: "Headline dengan skor tertinggi", en: "Highest-scoring headlines" },
+  "dash.ticker.pause": { id: "Jeda pita headline", en: "Pause headline ticker" },
+  "dash.ticker.play": { id: "Putar pita headline", en: "Play headline ticker" },
+  "dash.ticker.pauseShort": { id: "Jeda", en: "Pause" },
+  "dash.ticker.playShort": { id: "Putar", en: "Play" },
+  "dash.ticker.viewAll": { id: "Lihat semua di Insight", en: "View all in Insight" },
+  "dash.ticker.viewAllShort": { id: "Lihat semua", en: "View all" },
+  "dash.ticker.empty": {
+    id: "Belum ada headline penting dalam 24 jam terakhir.",
+    en: "No major headlines in the last 24 hours.",
+  },
+  "dash.ticker.error": {
+    id: "Headline belum dapat dimuat. Bagian dashboard lainnya tetap berjalan normal.",
+    en: "Headlines could not be loaded. The rest of the dashboard works as usual.",
+  },
+  "insight.categoryShort.bencana_alam": { id: "Bencana", en: "Disaster" },
+  "insight.categoryShort.kesehatan_wabah": { id: "Wabah", en: "Health" },
+  "insight.categoryShort.ekonomi_makro": { id: "Makro", en: "Macro" },
+  "insight.categoryShort.pasar_keuangan": { id: "Pasar", en: "Markets" },
+  "insight.categoryShort.regulasi": { id: "Regulasi", en: "Regulation" },
+  "insight.categoryShort.industri_asuransi": { id: "Asuransi", en: "Insurance" },
+  "insight.categoryShort.perbankan_bri": { id: "Perbankan", en: "Banking" },
+  "insight.categoryShort.lainnya": { id: "Lainnya", en: "Other" },
+
   "dash.historical.title": { id: "Industry Pulse", en: "Industry Pulse" },
   "dash.historical.badge": { id: "Historis · TA 2024", en: "Historical · FY 2024" },
   "dash.historical.subtitle": {

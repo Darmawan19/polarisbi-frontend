@@ -11,6 +11,7 @@ import { INSIGHT_PERIODS, type InsightPeriod, type SourceStatus } from "@/lib/in
 import { useAutoRefresh, useDigest, useNow, useRecentFeed, useSources } from "@/hooks/use-insight";
 import { AspectRadar } from "./aspect-radar";
 import { DashboardBrief } from "./dashboard-brief";
+import { HeadlineTicker } from "./headline-ticker";
 import { SourceHealth } from "./source-health";
 import { cn } from "@/lib/utils";
 
@@ -101,6 +102,9 @@ function LiveInsightBlock() {
         DARK_CONTRAST_FIX
       )}
     >
+      {/* A. Pita headline: item 24 jam berskor tertinggi (data sama dengan Radar aspek) */}
+      <HeadlineTicker feed={recent} />
+
       <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">

@@ -347,3 +347,25 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }
+
+/* Pita headline dashboard (Insight langsung): loop horizontal pelan.
+   Trek berisi daftar asli + salinan aria-hidden, sehingga -50% menyambung mulus. */
+@keyframes insight-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.insight-ticker-track {
+  animation: insight-ticker var(--ticker-duration, 60s) linear infinite;
+}
+.insight-ticker:hover .insight-ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .insight-ticker-track {
+    animation: none;
+  }
+}
