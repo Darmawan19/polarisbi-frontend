@@ -19,7 +19,13 @@ import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
 import { useAuth, ROLE_LABEL_KEY } from "@/lib/auth/auth-context";
 
-export function Sidebar() {
+interface SidebarProps {
+  className?: string;
+  /** Dipanggil saat item menu dipilih (menutup panel overlay) */
+  onNavigate?: () => void;
+}
+
+export function Sidebar({ className, onNavigate }: SidebarProps = {}) {
   const pathname = usePathname();
   const { t } = useI18n();
   const { user, logout } = useAuth();
@@ -63,7 +69,7 @@ export function Sidebar() {
   const profileActive = pathname === "/profile";
 
   return (
-    <aside className="w-[240px] bg-sidebar flex flex-col h-screen shrink-0">
+    <aside className={cn("w-[240px] bg-sidebar flex flex-col h-screen shrink-0", className)}>
       {/* Workspace switcher top */}
       <div className="on-header bg-sidebar-head h-[60px] flex items-center px-3 border-b border-border dark:border-r">
         <button
@@ -110,6 +116,7 @@ export function Sidebar() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
+                    onClick={onNavigate}
                     className={cn(
                       "flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] transition-colors group",
                       active
@@ -142,6 +149,7 @@ export function Sidebar() {
         <Link
           href="/settings"
           aria-current={settingsActive ? "page" : undefined}
+          onClick={onNavigate}
           className={cn(
             "flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] transition-colors",
             settingsActive
@@ -156,6 +164,7 @@ export function Sidebar() {
           <Link
             href="/profile"
             aria-current={profileActive ? "page" : undefined}
+            onClick={onNavigate}
             className={cn(
               "flex flex-1 min-w-0 items-center gap-2 px-2 py-2 rounded-md transition-colors",
               profileActive

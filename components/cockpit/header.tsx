@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Sparkles, Calendar } from "lucide-react";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
@@ -34,7 +35,7 @@ function pageLabelKey(pathname: string): DictKey {
   return match ? PAGE_LABEL[match] : "headerSectionLabel";
 }
 
-export function Header() {
+export function Header({ menuButton }: { menuButton?: ReactNode }) {
   const [isMac, setIsMac] = useState(false);
   const [time, setTime] = useState("");
   const { t } = useI18n();
@@ -113,6 +114,22 @@ export function Header() {
       </a>
 
       <div className="flex items-center gap-4 min-w-0">
+        {/* Hamburger + merek (blok merek sidebar tersembunyi saat panel tertutup) */}
+        <div className="flex items-center gap-2 shrink-0">
+          {menuButton}
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-md px-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="h-6 w-6 rounded-md bg-white flex items-center justify-center overflow-hidden ring-1 ring-border/40">
+              <Image src="/logo.png" alt="" width={24} height={24} className="h-full w-full object-cover" />
+            </span>
+            <span className="text-[13px] font-semibold text-foreground">{t("workspaceName")}</span>
+          </Link>
+        </div>
+
+        <div className="h-4 w-px bg-border" aria-hidden="true" />
+
         {/* Section context */}
         <div className="flex items-center gap-2 min-w-0">
           <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />

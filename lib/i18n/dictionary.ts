@@ -146,6 +146,7 @@ export const dictionary = {
   breadcrumbLabel: { id: "Jejak halaman", en: "Breadcrumb" },
   skipToContent: { id: "Lompat ke konten utama", en: "Skip to main content" },
   navMainLabel: { id: "Navigasi utama", en: "Main navigation" },
+  menuOpen: { id: "Buka menu navigasi", en: "Open navigation menu" },
   headerCurrentPage: { id: "Halaman aktif", en: "Current page" },
 
   // Command palette
