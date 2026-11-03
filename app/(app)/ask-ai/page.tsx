@@ -5,14 +5,10 @@ import {
   Sparkles,
   Send,
   Clock,
-  History,
-  BookOpen,
-  Database,
   RotateCcw,
   X,
 } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { AskResultBody } from "@/components/cockpit/ask-result";
 import { useAskStream } from "@/hooks/use-ask-stream";
 import { useFindingsStore } from "@/lib/stores/findings";
@@ -244,34 +240,6 @@ export default function AskAIPage() {
                 ))}
               </div>
             )}
-          </div>
-        </div>
-
-        <div className="px-8 pb-8">
-          <div className="max-w-7xl mx-auto">
-            <hr className="my-8 border-border/40" />
-            <RelatedPages
-              links={[
-                {
-                  label: "Query History",
-                  href: "/query-history",
-                  icon: History,
-                  description: "View past queries and results",
-                },
-                {
-                  label: "KPI Glossary",
-                  href: "/kpi-glossary",
-                  icon: BookOpen,
-                  description: "Look up insurance metric definitions",
-                },
-                {
-                  label: "Data Schema",
-                  href: "/data-schema",
-                  icon: Database,
-                  description: "Browse available tables and columns",
-                },
-              ]}
-            />
           </div>
         </div>
       </div>

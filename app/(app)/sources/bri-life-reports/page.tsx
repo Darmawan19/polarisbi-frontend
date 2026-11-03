@@ -1,8 +1,7 @@
 "use client";
 
-import { FileText, Sparkles } from "lucide-react";
+import { FileText } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { SourceDocumentsList, type SourceDocument } from "@/components/cockpit/source-documents-list";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -37,14 +36,6 @@ export default function BRILifeReportsPage() {
       <div className="flex-1 overflow-y-auto px-8 py-6">
         <div className="max-w-7xl mx-auto">
           <SourceDocumentsList documents={BRILIFE_DOCS} />
-          <hr className="my-8 border-border/40" />
-          <RelatedPages
-            links={[
-              { label: "OJK Statistics", href: "/sources/ojk-statistics", icon: FileText, description: "Regulatory data source" },
-              { label: "AAJI Press", href: "/sources/aaji-press", icon: FileText, description: "Industry association releases" },
-              { label: "Ask AI", href: "/ask-ai", icon: Sparkles, description: "Query BRI Life data" },
-            ]}
-          />
         </div>
       </div>
     </div>

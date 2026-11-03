@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { BookOpen, Search, Sparkles, Database, Activity } from "lucide-react";
+import { BookOpen, Search } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
@@ -305,14 +304,6 @@ export default function KPIGlossaryPage() {
             </div>
           )}
 
-          <hr className="my-8 border-border/40" />
-          <RelatedPages
-            links={[
-              { label: "Ask AI", href: "/ask-ai", icon: Sparkles, description: "Query KPIs in natural language" },
-              { label: "Data Schema", href: "/data-schema", icon: Database, description: "See where KPIs come from" },
-              { label: "Industry Pulse", href: "/", icon: Activity, description: "View live KPI dashboard" },
-            ]}
-          />
         </div>
       </div>
     </div>

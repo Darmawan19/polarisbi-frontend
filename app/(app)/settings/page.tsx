@@ -10,11 +10,8 @@ import {
   Database,
   AlertTriangle,
   Check,
-  User,
-  Activity,
 } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import type { Language } from "@/lib/i18n/dictionary";
@@ -302,14 +299,6 @@ export default function SettingsPage() {
             </div>
           </Section>
 
-          <hr className="my-8 border-border/40" />
-          <RelatedPages
-            links={[
-              { label: "Profile", href: "/profile", icon: User, description: "View user info and activity" },
-              { label: "Data Schema", href: "/data-schema", icon: Database, description: "Browse data sources" },
-              { label: "Industry Pulse", href: "/", icon: Activity, description: "Back to dashboard" },
-            ]}
-          />
         </div>
       </div>
     </div>

@@ -9,11 +9,8 @@ import {
   Database,
   BookOpen,
   FileText,
-  Settings as SettingsIcon,
-  History,
 } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 import { useAuth, ROLE_LABEL_KEY } from "@/lib/auth/auth-context";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
@@ -168,14 +165,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <hr className="my-8 border-border/40" />
-          <RelatedPages
-            links={[
-              { label: "Settings", href: "/settings", icon: SettingsIcon, description: "Adjust preferences" },
-              { label: "Query History", href: "/query-history", icon: History, description: "Review past activity" },
-              { label: "Industry Pulse", href: "/", icon: Activity, description: "Back to dashboard" },
-            ]}
-          />
         </div>
       </div>
     </div>

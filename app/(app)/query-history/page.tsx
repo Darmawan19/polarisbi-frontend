@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import {
   Clock,
   Sparkles,
-  BookOpen,
-  Activity,
   GripVertical,
   X,
   FileDown,
@@ -30,7 +28,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useFindingsStore, type Finding } from "@/lib/stores/findings";
 import { fetchReport, triggerDownload } from "@/lib/generate-report";
 import { buttonVariants } from "@/components/ui/button";
@@ -350,29 +347,6 @@ export default function QueryHistoryPage() {
             </DndContext>
           )}
 
-          <hr className="my-8 border-border/40" />
-          <RelatedPages
-            links={[
-              {
-                label: "Ask AI",
-                href: "/ask-ai",
-                icon: Sparkles,
-                description: "Start a new natural-language query",
-              },
-              {
-                label: "KPI Glossary",
-                href: "/kpi-glossary",
-                icon: BookOpen,
-                description: "Look up insurance metric definitions",
-              },
-              {
-                label: "Industry Pulse",
-                href: "/",
-                icon: Activity,
-                description: "Back to main dashboard",
-              },
-            ]}
-          />
         </div>
       </div>
     </div>

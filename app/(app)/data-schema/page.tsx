@@ -1,8 +1,7 @@
 "use client";
 
-import { Database, Table2, Key, Sparkles, BookOpen, FileText } from "lucide-react";
+import { Database, Table2, Key } from "lucide-react";
 import { PageHeader } from "@/components/cockpit/page-header";
-import { RelatedPages } from "@/components/cockpit/related-pages";
 import { useI18n } from "@/lib/i18n/context";
 
 const SCHEMA_DATA = [
@@ -164,14 +163,6 @@ export default function DataSchemaPage() {
             </div>
           ))}
 
-          <hr className="my-8 border-border/40" />
-          <RelatedPages
-            links={[
-              { label: "Ask AI", href: "/ask-ai", icon: Sparkles, description: "Query these tables in natural language" },
-              { label: "KPI Glossary", href: "/kpi-glossary", icon: BookOpen, description: "Understand metric definitions" },
-              { label: "OJK Statistics", href: "/sources/ojk-statistics", icon: FileText, description: "Source documents" },
-            ]}
-          />
         </div>
       </div>
     </div>
