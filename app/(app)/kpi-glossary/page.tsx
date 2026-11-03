@@ -186,7 +186,7 @@ export default function KPIGlossaryPage() {
   }, [search, category, lang]);
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
       <PageHeader
         title={lang === "id" ? "Glosarium KPI" : "KPI Glossary"}
         description={

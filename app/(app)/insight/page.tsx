@@ -114,7 +114,7 @@ function InsightView() {
   }, [refreshInPlace, reloadSources, reloadDigest]);
 
   return (
-    <div className={cn("flex-1 flex flex-col h-screen overflow-hidden", DARK_CONTRAST_FIX)}>
+    <div className={cn("flex-1 flex flex-col h-full overflow-hidden", DARK_CONTRAST_FIX)}>
       <PageHeader
         title={t("insight.title")}
         description={t("insight.description")}
@@ -180,8 +180,8 @@ function InsightView() {
 
 function InsightFallback() {
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden" aria-busy="true">
-      <div className="on-header bg-header border-b border-border/40 px-8 py-6">
+    <div className="flex-1 flex flex-col h-full overflow-hidden" aria-busy="true">
+      <div className="border-b border-border/60 px-8 pt-5 pb-4">
         <Skeleton className="h-6 w-40" />
       </div>
       <div className="p-8 space-y-4">

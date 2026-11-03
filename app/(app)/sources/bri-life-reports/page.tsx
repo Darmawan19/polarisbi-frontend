@@ -21,7 +21,7 @@ export default function BRILifeReportsPage() {
   const { lang } = useI18n();
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
       <PageHeader
         title={lang === "id" ? "Laporan BRI Life" : "BRI Life Reports"}
         description={

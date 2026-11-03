@@ -143,6 +143,10 @@ export const dictionary = {
 
   // Navigation
   backToDashboard: { id: "Dashboard", en: "Dashboard" },
+  breadcrumbLabel: { id: "Jejak halaman", en: "Breadcrumb" },
+  skipToContent: { id: "Lompat ke konten utama", en: "Skip to main content" },
+  navMainLabel: { id: "Navigasi utama", en: "Main navigation" },
+  headerCurrentPage: { id: "Halaman aktif", en: "Current page" },
 
   // Command palette
   cmdPlaceholder: { id: "Tanya apa saja tentang data asuransi...", en: "Ask anything about insurance data..." },
