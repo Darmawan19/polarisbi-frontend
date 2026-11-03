@@ -114,7 +114,11 @@ function InsightView() {
   }, [refreshInPlace, reloadSources, reloadDigest]);
 
   return (
-    <div className={cn("flex-1 flex flex-col h-full overflow-hidden", DARK_CONTRAST_FIX)}>
+    // Setiap wadah scroll/clip di halaman ini diberi `relative`. Elemen `sr-only`
+    // (position: absolute) hanya terpotong oleh wadah overflow yang juga menjadi
+    // containing block-nya; tanpa `relative`, teks sr-only di item feed dan brief
+    // lolos dan memperpanjang area scroll halaman maupun <main> kerangka.
+    <div className={cn("relative flex-1 flex flex-col h-full min-h-0 overflow-hidden", DARK_CONTRAST_FIX)}>
       <PageHeader
         title={t("insight.title")}
         description={t("insight.description")}
@@ -124,9 +128,10 @@ function InsightView() {
         className="px-4 sm:px-6 lg:px-8"
       />
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
-        <div className="mx-auto max-w-[1600px] space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* < lg: satu scroll halaman di sini. lg+: tinggi tetap, kolom scroll sendiri. */}
+      <div className="relative flex-1 min-h-0 overflow-y-auto px-4 py-4 sm:px-6 lg:flex lg:flex-col lg:overflow-hidden lg:px-8 lg:py-4">
+        <div className="mx-auto w-full max-w-[1600px] flex flex-col gap-4 lg:flex-1 lg:min-h-0">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
             <PeriodTabs value={period} onChange={onPeriod} />
             {INSIGHT_MOCK && (
               <span className="text-[11px] text-muted-foreground" title={t("insight.mockModeTitle")}>
@@ -135,22 +140,27 @@ function InsightView() {
             )}
           </div>
 
-          <SourceStatusStrip sources={sources} isAdmin={isAdmin} onRefreshed={onRefreshed} />
+          <div className="shrink-0">
+            <SourceStatusStrip sources={sources} isAdmin={isAdmin} onRefreshed={onRefreshed} />
+          </div>
 
-          {/* lg: tinggi baris mengikuti kolom kiri (min 28rem); feed mengisi sel itu dan
-              daftarnya scroll di dalam. Dulu feed dibatasi 100vh-10rem, sehingga baris
-              setinggi viewport dan menyisakan ruang kosong di bawah kolom kiri. */}
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <div className="min-w-0 space-y-4">
+          {/* lg: satu baris grid yang mengisi sisa tinggi (minmax(0,1fr)); tiap kolom scroll sendiri. */}
+          <div className="grid gap-4 lg:flex-1 lg:min-h-0 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)]">
+            <div
+              role="region"
+              aria-label={t("insight.columnBriefLabel")}
+              tabIndex={0}
+              className="relative min-w-0 space-y-4 rounded-lg lg:min-h-0 lg:overflow-y-auto lg:pr-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+            >
               <BriefCard key={period} period={period} digest={digest} canGenerate={canGenerate} />
               <ImpactPanel digest={digest} />
             </div>
 
-            <div className="relative min-w-0 lg:min-h-[28rem]">
+            <div className="min-w-0 lg:min-h-0">
               <section
                 aria-labelledby="insight-feed-title"
                 aria-busy={feed.loading || feed.loadingMore || undefined}
-                className="flex flex-col rounded-lg border border-border bg-card lg:absolute lg:inset-0"
+                className="flex flex-col rounded-lg border border-border bg-card lg:h-full lg:min-h-0"
               >
                 <header className="space-y-2.5 border-b border-border px-4 py-3">
                   <div className="flex items-center justify-between gap-2">
@@ -168,7 +178,7 @@ function InsightView() {
                   role="region"
                   aria-label={t("insight.feed.regionLabel")}
                   tabIndex={0}
-                  className="min-h-0 flex-1 overflow-y-auto px-3 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                  className="relative min-h-0 flex-1 overflow-y-auto px-3 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                 >
                   <FeedList feed={feed} />
                 </div>
@@ -176,7 +186,9 @@ function InsightView() {
             </div>
           </div>
 
-          <InsightFooter attributions={attributions} />
+          <div className="shrink-0">
+            <InsightFooter attributions={attributions} />
+          </div>
         </div>
       </div>
     </div>
