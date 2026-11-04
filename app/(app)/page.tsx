@@ -9,7 +9,7 @@ import { SectionCards } from "@/components/section-cards";
 import { CommandPalette } from "@/components/cockpit/command-palette";
 import { AskResult } from "@/components/cockpit/ask-result";
 import { useAskStream } from "@/hooks/use-ask-stream";
-import { LiveInsight } from "@/components/insight/dashboard/live-insight";
+import { DecisionCockpit } from "@/components/insight/cockpit/decision-cockpit";
 
 export default function Home() {
   const { state, ask, reset } = useAskStream();
@@ -30,8 +30,8 @@ export default function Home() {
       <div className="absolute inset-0 bg-grid pointer-events-none" />
       <div className="absolute inset-x-0 top-0 h-[400px] bg-radial-glow pointer-events-none" />
       <div className="relative flex flex-col gap-8 p-8 max-w-[1600px] mx-auto">
-        {/* Blok Insight langsung (data 24 jam, memuat datanya sendiri; gagal tidak memengaruhi KPI) */}
-        <LiveInsight />
+        {/* Monitor keputusan (memuat datanya sendiri; gagal tidak memengaruhi KPI) */}
+        <DecisionCockpit />
 
         {/* Pemisah: semua bagian di bawah ini adalah data historis FY, isinya tidak berubah */}
         <header className="-mb-4 flex flex-wrap items-end justify-between gap-2 border-t border-border pt-6 dark:[--muted-foreground:color-mix(in_oklab,var(--foreground)_66%,var(--card))]">
