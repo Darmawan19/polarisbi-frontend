@@ -28,6 +28,14 @@ import {
   type SourceStatus,
   type SourceStatusValue,
 } from "./types";
+import {
+  looksLikeOverview,
+  normalizeDecision,
+  normalizeOverview,
+  type Decision,
+  type DecisionStatus,
+  type Overview,
+} from "./overview";
 
 export const INSIGHT_MOCK = process.env.NEXT_PUBLIC_INSIGHT_MOCK === "true";
 
@@ -289,4 +297,46 @@ export async function getSources(signal?: AbortSignal): Promise<SourceStatus[]> 
 export async function getExposure(signal?: AbortSignal): Promise<ExposureResponse> {
   if (INSIGHT_MOCK) return normalizeExposure(await (await mock()).mockGetExposure());
   return normalizeExposure(await request(`${BASE}/exposure`, { signal }));
+}
+
+// ---------------------------------------------------------------- monitor keputusan
+
+async function overviewMock() {
+  return import("./overview-mock");
+}
+
+/**
+ * GET /api/insight/overview. Respons yang bukan bentuk overview (mis. HTML atau objek lain)
+ * dilempar sebagai ApiError "invalid_overview" agar UI bisa menampilkan "mesin belum aktif".
+ */
+export async function getOverview(signal?: AbortSignal): Promise<Overview> {
+  if (INSIGHT_MOCK) return normalizeOverview(await (await overviewMock()).mockGetOverview());
+  const raw = await request(`${BASE}/overview`, { signal });
+  if (!looksLikeOverview(raw)) throw new ApiError(200, "invalid_overview", "Unexpected overview response");
+  return normalizeOverview(raw);
+}
+
+/**
+ * POST /api/insight/decisions/{key}/status (hanya analyst/admin; header CSRF dari apiFetch).
+ * Mengembalikan keputusan terbaru bila server mengirimnya, null bila badan respons tidak berisi keputusan.
+ */
+export async function postDecisionStatus(key: string, status: DecisionStatus, note?: string): Promise<Decision | null> {
+  const body: { status: DecisionStatus; note?: string } = { status };
+  if (note && note.trim()) body.note = note.trim();
+  if (INSIGHT_MOCK) return normalizeDecision(await (await overviewMock()).mockPostDecisionStatus(key, status, body.note));
+  let res: Response;
+  try {
+    res = await apiFetch(`${BASE}/decisions/${encodeURIComponent(key)}/status`, postJson(body));
+  } catch (e) {
+    throw new ApiError(0, "network_error", e instanceof Error ? e.message : "Network error");
+  }
+  if (!res.ok) throw await readApiError(res);
+  try {
+    const raw: unknown = await res.json();
+    const o = raw && typeof raw === "object" && "decision" in raw ? (raw as { decision: unknown }).decision : raw;
+    return normalizeDecision(o);
+  } catch {
+    // 204 atau badan bukan JSON: perubahan tetap dianggap berhasil
+    return null;
+  }
 }

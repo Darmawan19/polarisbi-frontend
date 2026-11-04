@@ -44,7 +44,7 @@ export interface Resource<T> {
   setData: (data: T) => void;
 }
 
-function useResource<T>(key: string, fetcher: (signal: AbortSignal) => Promise<T>): Resource<T> {
+export function useResource<T>(key: string, fetcher: (signal: AbortSignal) => Promise<T>): Resource<T> {
   const [state, setState] = useState<ResourceState<T>>({ key: null, reqKey: null, data: null, error: null });
   const [nonce, setNonce] = useState(0);
   const fetcherRef = useRef(fetcher);
