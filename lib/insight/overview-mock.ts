@@ -22,6 +22,11 @@ function ago(ms: number): string {
   return new Date(Date.now() - ms).toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
+/** Tanggal YYYY-MM-DD, `daysBack` hari sebelum hari ini. */
+function dayAgo(daysBack: number): string {
+  return new Date(Date.now() - daysBack * 24 * HOUR).toISOString().slice(0, 10);
+}
+
 function delay<T>(value: T, ms = 400): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), ms));
 }
@@ -120,7 +125,9 @@ interface DecisionSeed {
   why: string;
   actions: string[];
   owner: string;
-  horizon: string;
+  /** kode backend: hari_ini | 7_hari | 30_hari */
+  horizon: "hari_ini" | "7_hari" | "30_hari";
+  horizon_label: string;
   confidence: "tinggi" | "sedang" | "rendah";
   flags: string[];
   aspect: AspectCategory;
@@ -156,7 +163,8 @@ const DECISIONS: DecisionSeed[] = [
       "Tinjau kecukupan cadangan klaim Credit Life dan Personal Accident wilayah Sulawesi",
     ],
     owner: "Divisi Klaim",
-    horizon: "24 jam",
+    horizon: "hari_ini",
+    horizon_label: "24 jam",
     confidence: "tinggi",
     flags: ["lonjakan"],
     aspect: "bencana_alam",
@@ -186,7 +194,8 @@ const DECISIONS: DecisionSeed[] = [
       "Evaluasi penyeimbangan sementara ke dana pendapatan tetap",
     ],
     owner: "Divisi Investasi",
-    horizon: "3 hari",
+    horizon: "7_hari",
+    horizon_label: "3 hari",
     confidence: "sedang",
     flags: ["lonjakan"],
     aspect: "pasar_keuangan",
@@ -214,7 +223,8 @@ const DECISIONS: DecisionSeed[] = [
       "Siapkan skenario harga ulang bila BI menaikkan suku bunga",
     ],
     owner: "Divisi Aktuaria",
-    horizon: "1 minggu",
+    horizon: "7_hari",
+    horizon_label: "1 minggu",
     confidence: "sedang",
     flags: [],
     aspect: "ekonomi_makro",
@@ -238,7 +248,8 @@ const DECISIONS: DecisionSeed[] = [
     why: "OJK merilis 1 rancangan POJK baru untuk masa konsultasi 30 hari; skor regulasi 46, naik 6 poin.",
     actions: ["Petakan pasal yang memengaruhi fitur dan biaya Unit-Link", "Jadwalkan masukan konsultasi bersama asosiasi"],
     owner: "Divisi Kepatuhan",
-    horizon: "2 minggu",
+    horizon: "30_hari",
+    horizon_label: "2 minggu",
     confidence: "tinggi",
     flags: [],
     aspect: "regulasi",
@@ -262,7 +273,8 @@ const DECISIONS: DecisionSeed[] = [
     why: "Rasio NPL KUR dilaporkan 3,1%, naik 0,2 poin dari kuartal lalu; skor perbankan BRI 38.",
     actions: ["Bandingkan tren klaim Credit Life dengan data NPL per wilayah", "Minta pembaruan data debitur restrukturisasi dari BRI"],
     owner: "Divisi Bancassurance",
-    horizon: "1 bulan",
+    horizon: "30_hari",
+    horizon_label: "1 bulan",
     confidence: "rendah",
     flags: [],
     aspect: "perbankan_bri",
@@ -293,19 +305,19 @@ function buildProducts() {
     const max = Math.max(...values);
     const mean = values.reduce((a, b) => a + b, 0) / values.length;
     const score = Math.round(0.7 * max + 0.3 * mean);
-    const drivers = ASPECT_CATEGORIES.map((c) => ({ category: c, cell: cells[c] }))
-      .sort((a, b) => b.cell - a.cell)
+    const drivers = ASPECT_CATEGORIES.map((c) => ({ aspect: c, value: cells[c] }))
+      .sort((a, b) => b.value - a.value)
       .slice(0, 2);
+    // decision_keys sengaja tidak dikirim (backend tidak mengirimnya); normalizer menurunkannya
     return {
-      code: p.code,
-      name: p.name,
-      line: p.line,
+      product_code: p.code,
+      product_name: p.name,
+      product_line: p.line,
       score,
       level: levelFromScore(score),
       delta: p.delta,
       drivers,
       cells,
-      decision_keys: DECISIONS.filter((d) => d.product_codes.includes(p.code)).map((d) => d.key),
     };
   });
 }
@@ -323,6 +335,7 @@ function buildDecisions() {
       actions: d.actions,
       owner: d.owner,
       horizon: d.horizon,
+      horizon_label: d.horizon_label,
       confidence: d.confidence,
       flags: d.flags,
       aspect: d.aspect,
@@ -343,6 +356,7 @@ function buildDecisions() {
       status_updated_by: o?.by ?? d.status_by,
       first_seen_at: ago(d.first_seen_ago),
       is_draft: true,
+      source_count: new Set(d.evidence.map((e) => e.source)).size,
     };
   });
 }
@@ -358,23 +372,23 @@ export function buildMockOverview() {
     aspects: ASPECT_CATEGORIES.map((c) => {
       const a = ASPECTS[c];
       return {
-        category: c,
+        aspect: c,
         score: a.score,
         level: levelFromScore(a.score),
         delta: a.delta,
         trend: trendOf(a.delta),
-        item_count: a.items,
+        event_count: a.items,
         max_severity: a.max,
-        sparkline: [...a.history, a.score],
+        sparkline: [...a.history, a.score].map((v, i, all) => ({ date: dayAgo(all.length - 1 - i), score: v })),
         vs_baseline: a.vs,
-        top_item_ids: a.top,
+        top_event_ids: a.top,
       };
     }),
     provinces: [
-      { province: "Sulawesi Utara", score: 81, level: "kritis", item_count: 9, categories: ["bencana_alam", "perbankan_bri"] },
-      { province: "DKI Jakarta", score: 64, level: "waspada", item_count: 12, categories: ["pasar_keuangan", "regulasi", "ekonomi_makro"] },
-      { province: "Gorontalo", score: 57, level: "waspada", item_count: 3, categories: ["bencana_alam"] },
-      { province: "Jawa Barat", score: 28, level: "normal", item_count: 2, categories: ["kesehatan_wabah"] },
+      { province: "Sulawesi Utara", score: 81, level: "kritis", event_count: 9, categories: ["bencana_alam", "perbankan_bri"] },
+      { province: "DKI Jakarta", score: 64, level: "waspada", event_count: 12, categories: ["pasar_keuangan", "regulasi", "ekonomi_makro"] },
+      { province: "Gorontalo", score: 57, level: "waspada", event_count: 3, categories: ["bencana_alam"] },
+      { province: "Jawa Barat", score: 28, level: "normal", event_count: 2, categories: ["kesehatan_wabah"] },
     ],
     products: buildProducts(),
     decisions: buildDecisions(),

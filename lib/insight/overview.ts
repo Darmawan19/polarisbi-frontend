@@ -139,6 +139,10 @@ export interface Decision {
   status_updated_by: string | null;
   first_seen_at: string | null;
   is_draft: boolean;
+  /** jumlah sumber berbeda di balik rekomendasi (belum ditampilkan) */
+  source_count?: number;
+  /** catatan terakhir saat status diubah (belum ditampilkan) */
+  status_note?: string | null;
 }
 
 export interface Overview {
@@ -217,6 +221,27 @@ function scoreLevel(v: unknown, s: number, bands: readonly LevelBand[]): ScoreLe
 function trend(v: unknown, d: number): Trend {
   return oneOfOrNull(v, TRENDS) ?? (d > 0 ? "naik" : d < 0 ? "turun" : "stabil");
 }
+/** Nilai pertama yang tidak undefined/null (untuk field yang punya nama lama dan baru). */
+function pick(...vals: unknown[]): unknown {
+  for (const v of vals) if (v !== undefined && v !== null) return v;
+  return undefined;
+}
+/** Titik sparkline: angka langsung, atau objek {date, score}. */
+function sparkPoint(v: unknown): number {
+  return isObj(v) ? num(v.score, NaN) : num(v, NaN);
+}
+const HORIZON_CODE_LABELS: Record<string, string> = {
+  hari_ini: "hari ini",
+  "7_hari": "7 hari",
+  "30_hari": "30 hari",
+};
+/** Teks horizon: horizon_label bila ada; kode dikenal diubah ke teks; selain itu teks apa adanya. */
+function horizonText(label: unknown, horizon: unknown): string {
+  const l = str(label);
+  if (l) return l;
+  const h = str(horizon);
+  return HORIZON_CODE_LABELS[h] ?? h.replace(/_/g, " ");
+}
 function severityFromScore(s: number): SeverityLabel {
   if (s >= 75) return "sangat_tinggi";
   if (s >= 50) return "tinggi";
@@ -244,7 +269,7 @@ function normalizeBands(v: unknown): LevelBand[] {
 
 function normalizeAspect(raw: unknown, bands: readonly LevelBand[]): OverviewAspect | null {
   if (!isObj(raw)) return null;
-  const category = oneOfOrNull(raw.category, ASPECT_CATEGORIES);
+  const category = oneOfOrNull(pick(raw.category, raw.aspect), ASPECT_CATEGORIES);
   if (!category) return null;
   const s = score(raw.score);
   const d = delta(raw.delta);
@@ -254,15 +279,15 @@ function normalizeAspect(raw: unknown, bands: readonly LevelBand[]): OverviewAsp
     level: scoreLevel(raw.level, s, bands),
     delta: d,
     trend: trend(raw.trend, d),
-    item_count: count(raw.item_count),
+    item_count: count(pick(raw.item_count, raw.event_count)),
     max_severity: oneOfOrNull(raw.max_severity, SEVERITY_LABELS),
     sparkline: arr(raw.sparkline)
-      .map((x) => num(x, NaN))
+      .map(sparkPoint)
       .filter((x) => Number.isFinite(x))
       .map((x) => Math.min(100, Math.max(0, x)))
       .slice(-7),
     vs_baseline: numOrNull(raw.vs_baseline),
-    top_item_ids: strList(raw.top_item_ids),
+    top_item_ids: strList(pick(raw.top_item_ids, raw.top_event_ids)),
   };
 }
 
@@ -275,7 +300,7 @@ function normalizeProvince(raw: unknown, bands: readonly LevelBand[]): OverviewP
     province,
     score: s,
     level: scoreLevel(raw.level, s, bands),
-    item_count: count(raw.item_count),
+    item_count: count(pick(raw.item_count, raw.event_count)),
     categories: arr(raw.categories)
       .map((c) => oneOfOrNull(c, ASPECT_CATEGORIES))
       .filter((c): c is AspectCategory => c !== null),
@@ -290,9 +315,9 @@ function normalizeCells(v: unknown): Partial<Record<AspectCategory, number>> {
       if (n !== null) out[c] = score(n);
     }
   } else {
-    // toleran: daftar {category, score|cell}
+    // toleran: daftar {category|aspect, score|cell|value}
     for (const e of arr(v).filter(isObj)) {
-      const c = oneOfOrNull(e.category, ASPECT_CATEGORIES);
+      const c = oneOfOrNull(pick(e.category, e.aspect), ASPECT_CATEGORIES);
       const n = numOrNull(e.score ?? e.cell ?? e.value);
       if (c && n !== null) out[c] = score(n);
     }
@@ -300,29 +325,37 @@ function normalizeCells(v: unknown): Partial<Record<AspectCategory, number>> {
   return out;
 }
 
-function normalizeProduct(raw: unknown, idx: number, bands: readonly LevelBand[]): OverviewProduct | null {
+function normalizeProduct(
+  raw: unknown,
+  idx: number,
+  bands: readonly LevelBand[],
+  decisions: readonly Decision[]
+): OverviewProduct | null {
   if (!isObj(raw)) return null;
-  const code = str(raw.code) || `produk-${idx + 1}`;
+  const code = str(pick(raw.code, raw.product_code)) || `produk-${idx + 1}`;
   const cells = normalizeCells(raw.cells);
   const cellValues = Object.values(cells) as number[];
   // skor produk hilang -> pakai sel tertinggi agar baris tidak tampil lebih tenang dari isinya
   const s = raw.score === undefined || raw.score === null ? (cellValues.length ? Math.max(...cellValues) : 0) : score(raw.score);
   return {
     code,
-    name: str(raw.name) || code,
-    line: str(raw.line),
+    name: str(pick(raw.name, raw.product_name)) || code,
+    line: str(pick(raw.line, raw.product_line)),
     score: s,
     level: scoreLevel(raw.level, s, bands),
     delta: delta(raw.delta),
     drivers: arr(raw.drivers)
       .filter(isObj)
       .map((d) => {
-        const category = oneOfOrNull(d.category, ASPECT_CATEGORIES);
-        return category ? { category, cell: score(d.cell ?? d.score) } : null;
+        const category = oneOfOrNull(pick(d.category, d.aspect), ASPECT_CATEGORIES);
+        return category ? { category, cell: score(pick(d.cell, d.value, d.score)) } : null;
       })
       .filter((d): d is ProductDriver => d !== null),
     cells,
-    decision_keys: strList(raw.decision_keys),
+    // backend tidak selalu mengirim decision_keys: turunkan dari product_codes keputusan yang sudah dinormalisasi
+    decision_keys: Array.isArray(raw.decision_keys)
+      ? strList(raw.decision_keys)
+      : decisions.filter((d) => d.product_codes.includes(code)).map((d) => d.key),
   };
 }
 
@@ -357,7 +390,7 @@ export function normalizeDecision(raw: unknown, idx = 0): Decision | null {
     why: str(raw.why),
     actions: strList(raw.actions),
     owner: str(raw.owner),
-    horizon: str(raw.horizon),
+    horizon: horizonText(raw.horizon_label, raw.horizon),
     confidence: oneOf<Confidence>(raw.confidence, CONFIDENCES, "sedang"),
     flags: strList(raw.flags),
     aspect: oneOfOrNull(raw.aspect, ASPECT_CATEGORIES),
@@ -367,11 +400,14 @@ export function normalizeDecision(raw: unknown, idx = 0): Decision | null {
       .map((e, i) => normalizeEvidence(e, i))
       .filter((e): e is DecisionEvidence => e !== null),
     status: oneOf<DecisionStatus>(raw.status, DECISION_STATUSES, "baru"),
-    status_updated_at: strOrNull(raw.status_updated_at),
-    status_updated_by: strOrNull(raw.status_updated_by),
+    // respons POST status memakai updated_at / updated_by
+    status_updated_at: strOrNull(pick(raw.status_updated_at, raw.updated_at)),
+    status_updated_by: strOrNull(pick(raw.status_updated_by, raw.updated_by)),
     first_seen_at: strOrNull(raw.first_seen_at),
     // aman secara bawaan: tanpa penanda eksplisit, rekomendasi dianggap draf yang perlu ditinjau
     is_draft: bool(raw.is_draft, true),
+    source_count: count(raw.source_count),
+    status_note: strOrNull(raw.status_note),
   };
 }
 
@@ -412,7 +448,7 @@ export function normalizeOverview(raw: unknown): Overview {
       .filter((d): d is Decision => d !== null)
   );
   const products = arr(o.products)
-    .map((p, i) => normalizeProduct(p, i, levels))
+    .map((p, i) => normalizeProduct(p, i, levels, decisions))
     .filter((p): p is OverviewProduct => p !== null)
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
 
